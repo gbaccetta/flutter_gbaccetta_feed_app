@@ -1,16 +1,9 @@
 # flutter_gbaccetta_feed_app
-
-A new Flutter project.
-
+This app serves as a demonstration within the context of the comprehensive guide to building scalable Flutter applications by @gbaccetta. Specifically, it aligns with the content covered in Part 2 of the tutorial.
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Here you can access the different parts
 
-A few resources to get you started if this is your first Flutter project:
+- [Part 1 — Architecture: a domain-driven clean architecture. Giovanni Accetta](https://gbaccetta.medium.com/flutter-scalable-app-guide-part-1-architecture-8f60a2bbfe04)
+- [Part 2 - Data layer](https://gbaccetta.medium.com/a-complete-guide-to-a-scalable-app-in-flutter-part-2-data-layer-7629b6bb3835)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
