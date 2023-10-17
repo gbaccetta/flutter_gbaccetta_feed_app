@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_contract.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/widgets/generic_widgets/screen_error_widget.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/widgets/generic_widgets/screen_loader_widget.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/widgets/model_widgets/article_card.dart';
+
+class ArticleListView extends StatefulWidget {
+  const ArticleListView({super.key});
+
+  @override
+  State<ArticleListView> createState() => _ArticleListViewWidgetState();
+}
+
+class _ArticleListViewWidgetState extends BaseViewWidgetState<
+    ArticleListView,
+    ArticleListVMContract,
+    ArticleListVMState> implements ArticleListViewContract {
+  @override
+  void onInitViewState() {}
+
+  @override
+  Widget Function() contentBuilder() {
+    return () => Scaffold(
+          appBar: AppBar(
+            title: Text('GBAccetta Portfolio', style: textTheme.titleLarge),
+          ),
+          body: Stack(
+            children: [
+              if (!vmState.hasError && vmState.articleList.isNotEmpty)
+                ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: vmState.articleList.length,
+                  itemBuilder: (context, index) => AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    child: vmState.articleVisibility[index]
+                        ? ArticleCard(
+                            article: vmState.articleList[index],
+                            onTap: () => vmContract.tapOnArticle(index),
+                            onHideTap: () => vmContract.tapOnHideArticle(index),
+                          )
+                        : const SizedBox(),
+                  ),
+                ),
+              if (!vmState.isLoading && vmState.articleList.isEmpty)
+                const ScreenErrorWidget(
+                  error: 'WOW!\n🚨\nNo articles in the list',
+                ),
+              if (vmState.hasError)
+                ScreenErrorWidget(onButtonTap: vmContract.requestArticleList),
+              if (vmState.isLoading) const ScreenLoaderWidget(),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: vmContract.requestArticleList,
+            child: const Icon(Icons.refresh),
+          ),
+        );
+  }
+
+  @override
+  void goToArticleDetailsScreen(int index) {
+    // TODO: this is not the ideal way to navigate. We will explore navigatio in part4 of our tutorial
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => ArticleDetailsView(article: vmState.articleList[index]),
+    ));
+  }
+}
