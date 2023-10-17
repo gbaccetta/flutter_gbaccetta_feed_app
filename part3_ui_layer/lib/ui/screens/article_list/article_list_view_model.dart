@@ -37,9 +37,9 @@ class ArticleListViewModel
     try {
       final articles = await _articleInteractor.getArticles();
       vmState.articleList.clear();
-      vmState.articleVisibility.clear();
+      vmState.articleVisibilityList.clear();
       vmState.articleList.addAll(articles);
-      vmState.articleVisibility.addAll(articles.map((e) => true));
+      vmState.articleVisibilityList.addAll(articles.map((e) => true));
     } catch (e) {
       vmState.hasError = true;
       if (e is ApiError) {
@@ -51,7 +51,7 @@ class ArticleListViewModel
 
   @override
   void tapOnHideArticle(int index) {
-    vmState.articleVisibility[index] = false;
+    vmState.articleVisibilityList[index] = false;
     notifyListeners();
   }
 }

@@ -17,6 +17,9 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     ArticleListView,
     ArticleListVMContract,
     ArticleListVMState> implements ArticleListViewContract {
+  bool get _showList => !vmState.hasError && vmState.articleList.isNotEmpty;
+  bool get _showPlaceholder =>
+      !vmState.isLoading && !vmState.articleVisibilityList.contains(true);
   @override
   void onInitViewState() {}
 
@@ -28,13 +31,13 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
           ),
           body: Stack(
             children: [
-              if (!vmState.hasError && vmState.articleList.isNotEmpty)
+              if (_showList)
                 ListView.builder(
                   padding: const EdgeInsets.all(8.0),
                   itemCount: vmState.articleList.length,
                   itemBuilder: (context, index) => AnimatedSize(
                     duration: const Duration(milliseconds: 300),
-                    child: vmState.articleVisibility[index]
+                    child: vmState.articleVisibilityList[index]
                         ? ArticleCard(
                             article: vmState.articleList[index],
                             onTap: () => vmContract.tapOnArticle(index),
@@ -43,7 +46,7 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
                         : const SizedBox(),
                   ),
                 ),
-              if (!vmState.isLoading && vmState.articleList.isEmpty)
+              if (_showPlaceholder)
                 const ScreenErrorWidget(
                   error: 'WOW!\n🚨\nNo articles in the list',
                 ),

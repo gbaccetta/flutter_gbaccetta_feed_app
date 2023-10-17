@@ -16,5 +16,5 @@ abstract class ArticleListVMContract
 
 class ArticleListVMState extends BaseViewModelState {
   final List<Article> articleList = [];
-  final List<bool> articleVisibility = [];
+  final List<bool> articleVisibilityList = [];
 }
