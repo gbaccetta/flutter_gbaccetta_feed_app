@@ -91,13 +91,13 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   /// This creates a Selector Widget that listens to specific changes in the [viewModelState].
   /// Provide the object [T] from the [viewModelState] using the [selector] parameter.
   Widget viewSelectorWidget<T>({
-    required Widget child,
+    required Widget Function() builder,
     required T Function(VMS) selector,
   }) =>
       _ViewSelector<VMC, VMS, T>(
         vmContract: vmContract,
         selector: selector,
-        child: child,
+        builder: builder,
       );
 }
 
@@ -120,17 +120,17 @@ class _ViewSelector<VMC extends BaseViewModelContract,
     VMS extends BaseViewModelState, T> extends StatelessWidget {
   final VMC vmContract;
   final T Function(VMS) selector;
-  final Widget child;
+  final Widget Function() builder;
 
   const _ViewSelector({
     required this.vmContract,
     required this.selector,
-    required this.child,
+    required this.builder,
   });
 
   @override
   Widget build(BuildContext context) => Selector<VMC, T>(
         selector: (context, vmContract) => selector(vmContract.vmState as VMS),
-        builder: (context, vmContract, _) => child,
+        builder: (context, vmContract, _) => builder(),
       );
 }
