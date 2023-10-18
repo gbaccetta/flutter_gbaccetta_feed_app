@@ -21,46 +21,44 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
   bool get _showPlaceholder =>
       !vmState.isLoading && !vmState.articleVisibilityList.contains(true);
   @override
-  void onInitViewState() {}
+  void onInitState() {}
 
   @override
-  Widget Function() contentBuilder() {
-    return () => Scaffold(
-          appBar: AppBar(
-            title: Text('GBAccetta Portfolio', style: textTheme.titleLarge),
-          ),
-          body: Stack(
-            children: [
-              if (_showList)
-                ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: vmState.articleList.length,
-                  itemBuilder: (context, index) => AnimatedSize(
-                    duration: const Duration(milliseconds: 300),
-                    child: vmState.articleVisibilityList[index]
-                        ? ArticleCard(
-                            article: vmState.articleList[index],
-                            onTap: () => vmContract.tapOnArticle(index),
-                            onHideTap: () => vmContract.tapOnHideArticle(index),
-                          )
-                        : const SizedBox(),
-                  ),
+  Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
+        appBar: AppBar(
+          title: Text('GBAccetta Portfolio', style: textTheme.titleLarge),
+        ),
+        body: Stack(
+          children: [
+            if (_showList)
+              ListView.builder(
+                padding: const EdgeInsets.all(8.0),
+                itemCount: vmState.articleList.length,
+                itemBuilder: (context, index) => AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  child: vmState.articleVisibilityList[index]
+                      ? ArticleCard(
+                          article: vmState.articleList[index],
+                          onTap: () => vmContract.tapOnArticle(index),
+                          onHideTap: () => vmContract.tapOnHideArticle(index),
+                        )
+                      : const SizedBox(),
                 ),
-              if (_showPlaceholder)
-                const ScreenErrorWidget(
-                  error: 'WOW!\n🚨\nNo articles in the list',
-                ),
-              if (vmState.hasError)
-                ScreenErrorWidget(onButtonTap: vmContract.requestArticleList),
-              if (vmState.isLoading) const ScreenLoaderWidget(),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: vmContract.requestArticleList,
-            child: const Icon(Icons.refresh),
-          ),
-        );
-  }
+              ),
+            if (_showPlaceholder)
+              const ScreenErrorWidget(
+                error: 'WOW!\n🚨\nNo articles in the list',
+              ),
+            if (vmState.hasError)
+              ScreenErrorWidget(onButtonTap: vmContract.requestArticleList),
+            if (vmState.isLoading) const ScreenLoaderWidget(),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: vmContract.requestArticleList,
+          child: const Icon(Icons.refresh),
+        ),
+      );
 
   @override
   void goToArticleDetailsScreen(int index) {

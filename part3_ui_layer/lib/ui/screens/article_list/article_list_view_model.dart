@@ -13,7 +13,7 @@ class ArticleListViewModel
   }) : _articleInteractor = articleInteractor;
 
   @override
-  void onInitViewState() {
+  void onInitState() {
     // Since in the onInitViewState the widget tree is not built yet there is
     // no need to call notifyListener to update the view
     vmState.isLoading = true;

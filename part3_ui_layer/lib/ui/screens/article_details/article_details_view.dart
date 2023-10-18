@@ -17,20 +17,20 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
     ArticleDetailsVMContract,
     ArticleDetailsVMState> implements ArticleDetailsViewContract {
   @override
-  void onInitViewState() {
+  void onInitState() {
     vmState.article = widget.article;
   }
 
   @override
-  Widget Function() contentBuilder() {
-    return () => Scaffold(
-      appBar: AppBar(
-        title: Text('Content', style: textTheme.titleLarge),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8),
-        child: Html(data: vmState.article.content),
-      ),
-    );
+  Widget Function(BuildContext) contentBuilder() {
+    return (context) => Scaffold(
+          appBar: AppBar(
+            title: Text('Content', style: textTheme.titleLarge),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            child: Html(data: vmState.article.content),
+          ),
+        );
   }
 }

@@ -28,15 +28,15 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   ThemeData get theme => Theme.of(context);
   TextTheme get textTheme => theme.textTheme;
 
-  /// Ensuring @[mustCallSuper] to guarantee [onInitViewState] is always called.
+  /// Ensuring @[mustCallSuper] to guarantee [onInitState] is always called.
   /// Dispatching this event to the viewModel signals that the UI is ready for initialization.
-  /// Overriding [onInitViewState] in a viewState allows additional initialization from the view,
+  /// Overriding [onInitState] in a viewState allows additional initialization from the view,
   /// executed before the viewModel's init.
   @override
   @mustCallSuper
   void initState() {
-    onInitViewState();
-    vmContract.onInitViewState();
+    onInitState();
+    vmContract.onInitState();
     super.initState();
   }
 
@@ -51,18 +51,18 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
         create: (_) => vmContract,
         child: autoSubscribeToVmStateChanges
             ? viewConsumerWidget(builder: contentBuilder())
-            : contentBuilder().call(),
+            : contentBuilder().call(context),
       );
 
   /// Override this method to build the view using the [viewModelState].
   /// Ensure you don't directly override the build method to include the Provider in the widget tree.
-  Widget Function() contentBuilder();
+  Widget Function(BuildContext context) contentBuilder();
 
   /// Use this method for view initialization tasks, such as retrieving information from
   /// top-level providers (e.g., User) using `context.read<ProviderObject>())`,
   /// or for loading view parameters into the state (e.g., details of an Article
   /// when the view is launched after tapping an article card in a list of articles).
-  void onInitViewState();
+  void onInitState();
 
   /// We add @mustCallSuper to ensure that the event is dispatched to the ViewModel.
   ///
@@ -79,11 +79,11 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   ///
   /// This creates a Consumer Widget that listens to changes in the [viewModelState].
   Widget viewConsumerWidget({
-    required Widget Function() builder,
+    required Widget Function(BuildContext context) builder,
   }) =>
       _ViewConsumer<VMC>(
         vmContract: vmContract,
-        builder: () => builder(),
+        builder: builder,
       );
 
   /// Use this widget only if [vmState.autoSubscribeToVmStateChanges] is set to false.
@@ -91,7 +91,7 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   /// This creates a Selector Widget that listens to specific changes in the [viewModelState].
   /// Provide the object [T] from the [viewModelState] using the [selector] parameter.
   Widget viewSelectorWidget<T>({
-    required Widget Function() builder,
+    required Widget Function(BuildContext) builder,
     required T Function(VMS) selector,
   }) =>
       _ViewSelector<VMC, VMS, T>(
@@ -103,7 +103,7 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
 
 class _ViewConsumer<VMC extends BaseViewModelContract> extends StatelessWidget {
   final VMC vmContract;
-  final Widget Function() builder;
+  final Widget Function(BuildContext context) builder;
 
   const _ViewConsumer({
     required this.vmContract,
@@ -112,7 +112,7 @@ class _ViewConsumer<VMC extends BaseViewModelContract> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Consumer<VMC>(
-        builder: (context, vmContract, _) => builder(),
+        builder: (context, vmContract, _) => builder(context),
       );
 }
 
@@ -120,7 +120,7 @@ class _ViewSelector<VMC extends BaseViewModelContract,
     VMS extends BaseViewModelState, T> extends StatelessWidget {
   final VMC vmContract;
   final T Function(VMS) selector;
-  final Widget Function() builder;
+  final Widget Function(BuildContext context) builder;
 
   const _ViewSelector({
     required this.vmContract,
@@ -131,6 +131,6 @@ class _ViewSelector<VMC extends BaseViewModelContract,
   @override
   Widget build(BuildContext context) => Selector<VMC, T>(
         selector: (context, vmContract) => selector(vmContract.vmState as VMS),
-        builder: (context, vmContract, _) => builder(),
+        builder: (context, vmContract, _) => builder(context),
       );
 }

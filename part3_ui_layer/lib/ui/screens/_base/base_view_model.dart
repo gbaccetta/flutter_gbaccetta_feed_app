@@ -10,17 +10,22 @@ abstract class BaseViewModel<VMS extends BaseViewModelState,
   @override
   late final VC viewContract;
 
+  /// this provide an handle to any data layer work or data
+  /// processing to be performed when the view is initialized
   @override
-  void onInitViewState() {}
+  void onInitState() {}
 
+  /// same for when the view is disposed
   @override
   void onDisposeView() {}
 
+  /// update the state and notify listeners when loading starts
   void startLoadingState() {
     vmState.isLoading = true;
     notifyListeners();
   }
 
+  /// update the state and notify listeners when loading finishes
   void stopLoadingState() {
     vmState.isLoading = false;
     notifyListeners();
