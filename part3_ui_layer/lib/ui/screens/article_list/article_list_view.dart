@@ -64,7 +64,7 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
 
   @override
   void goToArticleDetailsScreen(int index) {
-    // TODO: this is not the ideal way to navigate. We will explore navigatio in part4 of our tutorial
+    // TODO: this is not the ideal way to navigate. We will explore navigation in part4 of our tutorial
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => ArticleDetailsView(article: vmState.articleList[index]),
     ));

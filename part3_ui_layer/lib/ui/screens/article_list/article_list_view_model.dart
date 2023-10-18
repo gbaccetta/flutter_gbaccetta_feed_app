@@ -1,15 +1,15 @@
-import 'package:flutter_gbaccetta_feed_app/data/interactors/article_interactor.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/failures/api_error.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/use_cases/article_use_cases.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_model.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_contract.dart';
 
 class ArticleListViewModel
     extends BaseViewModel<ArticleListVMState, ArticleListViewContract>
     implements ArticleListVMContract {
-  final ArticleInteractor _articleInteractor;
+  final ArticleUseCases _articleInteractor;
 
   ArticleListViewModel({
-    required ArticleInteractor articleInteractor,
+    required ArticleUseCases articleInteractor,
   }) : _articleInteractor = articleInteractor;
 
   @override
