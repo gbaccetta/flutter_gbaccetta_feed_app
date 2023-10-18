@@ -23,8 +23,7 @@ class ArticleListViewModel
   @override
   Future<void> requestArticleList() async {
     // Start loading and notifyListeners to update view during the refresh
-    vmState.isLoading = true;
-    notifyListeners();
+    startLoadingState();
     await _refreshArticleList();
   }
 
@@ -45,8 +44,7 @@ class ArticleListViewModel
       if (e is ApiError) {
       } else {}
     }
-    vmState.isLoading = false;
-    notifyListeners();
+    stopLoadingState();
   }
 
   @override

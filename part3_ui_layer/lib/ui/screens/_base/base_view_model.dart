@@ -15,4 +15,14 @@ abstract class BaseViewModel<VMS extends BaseViewModelState,
 
   @override
   void onDisposeView() {}
+
+  void startLoadingState() {
+    vmState.isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoadingState() {
+    vmState.isLoading = false;
+    notifyListeners();
+  }
 }
