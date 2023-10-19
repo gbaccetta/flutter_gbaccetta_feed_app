@@ -3,13 +3,18 @@ import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_contract.dart';
 import 'package:provider/provider.dart';
 
+/// Abstract BaseViewWidgetState: This forms the foundation for the state of any view.
+///
+/// This stateful widget serves several critical purposes:
+/// 1. Maintains a constant instance of the viewModelState and viewModelContract that survives any rebuild.
+/// 2. Provides constant access to the BuildContext in which the view is created.
+/// 3. Allows observation of the view's lifecycle, including initState and dispose events.
 abstract class BaseViewWidgetState<SW extends StatefulWidget,
         VMC extends BaseViewModelContract, VMS extends BaseViewModelState>
     extends State<SW> implements BaseViewContract {
-  // In this architecture, we use Provider to make the entire view subscribe
-  // to viewModel changes. However, this implies that each state change causes
-  // a full view rebuild. Setting this to false allows more targeted rebuilds
-  // using Selector or Consumer widgets from the provider library as needed.
+  /// By default, autoSubscribeToVmStateChanges is set to true. This means the entire view will
+  /// rebuild whenever the viewModel's state changes. For resource-intensive views, you can override it to
+  /// false and use viewConsumerWidget or viewSelectorWidget for targeted rebuilds.
   final autoSubscribeToVmStateChanges = true;
 
   /// Initializes the binding with the ViewModel and its state.
@@ -17,6 +22,9 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   /// The [ViewModelContract] acts as an event sink, enabling the dispatch
   /// of UI events to the ViewModel. This constructor retrieves the ViewModel
   /// instance and initializes a ViewModelState, binding it to this ViewState.
+  /// 
+  /// Note: we use again the getIt service locator. This simplify
+  /// the binding process are we are using abstract classes and dynamic types
   BaseViewWidgetState() {
     vmContract = getIt<VMC>();
     vmContract.vmState = getIt<VMS>();
@@ -91,8 +99,8 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   /// This creates a Selector Widget that listens to specific changes in the [viewModelState].
   /// Provide the object [T] from the [viewModelState] using the [selector] parameter.
   Widget viewSelectorWidget<T>({
-    required Widget Function(BuildContext) builder,
     required T Function(VMS) selector,
+    required Widget Function(BuildContext) builder,
   }) =>
       _ViewSelector<VMC, VMS, T>(
         vmContract: vmContract,
