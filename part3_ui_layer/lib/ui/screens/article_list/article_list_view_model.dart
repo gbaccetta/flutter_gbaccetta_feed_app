@@ -14,15 +14,14 @@ class ArticleListViewModel
 
   @override
   void onInitState() {
-    // Since in the onInitViewState the widget tree is not built yet there is
-    // no need to call notifyListener to update the view
+    // In the onInitwState the widget tree is not built yet hence the call to 
+    // notifyListener() is not needed
     vmState.isLoading = true;
     _refreshArticleList();
   }
 
   @override
   Future<void> requestArticleList() async {
-    // Start loading and notifyListeners to update view during the refresh
     startLoadingState();
     await _refreshArticleList();
   }
