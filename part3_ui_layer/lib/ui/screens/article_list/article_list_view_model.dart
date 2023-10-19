@@ -14,7 +14,7 @@ class ArticleListViewModel
 
   @override
   void onInitState() {
-    // In the onInitwState the widget tree is not built yet hence the call to 
+    // In the onInitState the widget tree is not built yet hence the call to
     // notifyListener() is not needed
     vmState.isLoading = true;
     _refreshArticleList();
@@ -32,10 +32,10 @@ class ArticleListViewModel
   }
 
   Future<void> _refreshArticleList() async {
+    vmState.articleList.clear();
+    vmState.articleVisibilityList.clear();
     try {
       final articles = await _articleInteractor.getArticles();
-      vmState.articleList.clear();
-      vmState.articleVisibilityList.clear();
       vmState.articleList.addAll(articles);
       vmState.articleVisibilityList.addAll(articles.map((e) => true));
     } catch (e) {

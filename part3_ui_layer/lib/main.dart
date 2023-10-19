@@ -15,9 +15,9 @@ class GBAccettaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'GBAccetta Portfolio',
-      // TODO app theming will be adressed in part 5 of this guide
+      // TODO app theming will be addressed in part 5 of this guide
       theme: ThemeData(primarySwatch: Colors.green),
-      // TODO proper navigation will be adressed in part 4 of this guide
+      // TODO proper navigation will be addressed in part 4 of this guide
       home: const ArticleListView(),
     );
   }
