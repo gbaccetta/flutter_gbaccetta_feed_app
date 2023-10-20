@@ -35,8 +35,8 @@ void main() {
 
   Future<void> init(
     WidgetTester tester, {
-    apiResponseCodeMediumRssFeed = 200,
-    apiResponseDataMediumRssFeed,
+    int apiResponseCodeMediumRssFeed = 200,
+    String? apiResponseDataMediumRssFeed,
   }) async {
     view = const ArticleListView();
     mockClientAdapter = getIt<MockClientAdapter>();
@@ -138,24 +138,50 @@ void main() {
     expect(emptyListMessage, findsOneWidget);
   });
 
-  testWidgets('tap On Fab should refresh to a 2 articles list', (tester) async {
-    await init(
-      tester,
-      apiResponseDataMediumRssFeed: MediumRssFeedMocked().string_200_2,
-    );
-    await tester.pumpAndSettle();
+  group('tap on fab -', () {
+    testWidgets('should clear error than load 2 articles list', (tester) async {
+      await init(
+        tester,
+        apiResponseCodeMediumRssFeed: 400,
+      );
+      await tester.pumpAndSettle();
 
-    expect(articleCard, findsNothing);
-    expect(emptyListMessage, findsOneWidget);
+      expect(articleCard, findsNothing);
+      expect(emptyListMessage, findsNothing);
+      expect(error, findsOneWidget);
 
-    mockClientAdapter
-        .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
-        .thenAnswer(200, response: MediumRssFeedMocked().string_200_3);
+      mockClientAdapter
+          .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
+          .thenAnswer(200, response: MediumRssFeedMocked().string_200_3);
 
-    await tester.tap(fab);
-    await tester.pumpAndSettle();
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
 
-    expect(articleCard, findsNWidgets(2));
-    expect(emptyListMessage, findsNothing);
+      expect(articleCard, findsNWidgets(2));
+      expect(error, findsNothing);
+      expect(emptyListMessage, findsNothing);
+    });
+
+    testWidgets('from empty list to an error', (tester) async {
+      await init(
+        tester,
+        apiResponseDataMediumRssFeed: MediumRssFeedMocked().string_200_2,
+      );
+      await tester.pumpAndSettle();
+
+      expect(articleCard, findsNothing);
+      expect(emptyListMessage, findsOneWidget);
+
+      mockClientAdapter
+          .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
+          .thenAnswer(400);
+
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      expect(articleCard, findsNothing);
+      expect(error, findsOneWidget);
+      expect(emptyListMessage, findsNothing);
+    });
   });
 }

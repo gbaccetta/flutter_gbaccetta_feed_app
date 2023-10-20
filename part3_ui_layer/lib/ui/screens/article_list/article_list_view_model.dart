@@ -34,6 +34,7 @@ class ArticleListViewModel
   Future<void> _refreshArticleList() async {
     vmState.articleList.clear();
     vmState.articleVisibilityList.clear();
+    vmState.hasError = false;
     try {
       final articles = await _articleInteractor.getArticles();
       vmState.articleList.addAll(articles);
