@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/user.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_contract.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,7 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   /// The [ViewModelContract] acts as an event sink, enabling the dispatch
   /// of UI events to the ViewModel. This constructor retrieves the ViewModel
   /// instance and initializes a ViewModelState, binding it to this ViewState.
-  /// 
+  ///
   /// Note: we use again the getIt service locator. This simplify
   /// the binding process are we are using abstract classes and dynamic types
   BaseViewWidgetState() {
@@ -43,6 +44,8 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   @override
   @mustCallSuper
   void initState() {
+    // this is not needed for our app but shown as an example
+    vmState.user = context.read<User>();
     onInitState();
     vmContract.onInitState();
     super.initState();

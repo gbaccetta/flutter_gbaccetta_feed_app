@@ -3,4 +3,12 @@ import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_de
 
 class ArticleDetailsViewModel
     extends BaseViewModel<ArticleDetailsVMState, ArticleDetailsViewContract>
-    implements ArticleDetailsVMContract {}
+    implements ArticleDetailsVMContract {
+  @override
+  Future<void> tapOnRefreshPage() async {
+    startLoadingState();
+    // Let's use a fake delay of 1 seconds
+    await Future.delayed(const Duration(seconds: 1));
+    stopLoadingState();
+  }
+}

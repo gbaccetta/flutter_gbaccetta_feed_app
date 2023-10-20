@@ -16,21 +16,44 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
     ArticleDetailsView,
     ArticleDetailsVMContract,
     ArticleDetailsVMState> implements ArticleDetailsViewContract {
+  /// While this page is largely static, it contains an artificial loader. To showcase
+  /// updating only a specific part of the UI, we've overridden this behavior.
+  @override
+  bool get autoSubscribeToVmStateChanges => false;
+
   @override
   void onInitState() {
     vmState.article = widget.article;
   }
 
   @override
-  Widget Function(BuildContext) contentBuilder() {
-    return (context) => Scaffold(
-          appBar: AppBar(
-            title: Text('Content', style: textTheme.titleLarge),
+  Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
+        appBar: AppBar(
+          title: Text('Content', style: textTheme.titleLarge),
+        ),
+        body: SizedBox.expand(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(8),
+                  child: Html(data: vmState.article.content),
+                ),
+              ),
+              // We've included this selector widget here for demonstration purposes,
+              // in contrast to the default implementation that uses viewConsumerWidget.
+              viewSelectorWidget(
+                selector: (vmState) => vmState.isLoading,
+                builder: (_) => vmState.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : const SizedBox(),
+              ),
+            ],
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(8),
-            child: Html(data: vmState.article.content),
-          ),
-        );
-  }
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: vmContract.tapOnRefreshPage,
+          child: const Icon(Icons.refresh),
+        ),
+      );
 }

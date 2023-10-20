@@ -14,5 +14,5 @@ abstract class ArticleListVMContract
     extends BaseViewModelContract<ArticleListVMState, ArticleListViewContract> {
   void tapOnArticle(int index);
   void tapOnHideArticle(int index);
-  void requestArticleList();
+  void tapOnRefreshArticleList();
 }

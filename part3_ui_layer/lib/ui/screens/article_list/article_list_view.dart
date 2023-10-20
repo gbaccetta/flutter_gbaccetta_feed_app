@@ -19,7 +19,9 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     ArticleListVMState> implements ArticleListViewContract {
   bool get _showList => !vmState.hasError && vmState.articleList.isNotEmpty;
   bool get _showPlaceholder =>
-      !vmState.isLoading && !vmState.articleVisibilityList.contains(true);
+      !vmState.hasError &&
+      !vmState.isLoading &&
+      !vmState.articleVisibilityList.contains(true);
   @override
   void onInitState() {}
 
@@ -50,12 +52,13 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
                 error: 'WOW!\n🚨\nNo articles in the list',
               ),
             if (vmState.hasError)
-              ScreenErrorWidget(onButtonTap: vmContract.requestArticleList),
+              ScreenErrorWidget(
+                  onButtonTap: vmContract.tapOnRefreshArticleList),
             if (vmState.isLoading) const ScreenLoaderWidget(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: vmContract.requestArticleList,
+          onPressed: vmContract.tapOnRefreshArticleList,
           child: const Icon(Icons.refresh),
         ),
       );

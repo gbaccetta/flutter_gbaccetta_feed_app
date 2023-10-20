@@ -21,7 +21,7 @@ class ArticleListViewModel
   }
 
   @override
-  Future<void> requestArticleList() async {
+  Future<void> tapOnRefreshArticleList() async {
     startLoadingState();
     await _refreshArticleList();
   }

@@ -10,6 +10,15 @@ abstract class BaseViewModel<VMS extends BaseViewModelState,
   @override
   late final VC viewContract;
 
+  /// we wrap this to avoid any uncaught exception when a notify Listener() is 
+  /// fired after the dispose() method is called on the corresponding view.
+  @override
+  void notifyListeners() {
+    try {
+    super.notifyListeners();
+    } catch (_){}
+  }
+
   /// this provide an handle to any data layer work or data
   /// processing to be performed when the view is initialized
   @override

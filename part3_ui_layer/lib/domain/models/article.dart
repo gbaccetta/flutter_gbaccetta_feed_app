@@ -28,7 +28,7 @@ class Article {
       keywords: item.categories?.map((e) => e.value).toList() ?? [],
       url: item.link ?? '',
       date: item.pubDate ?? DateTime.now(),
-      coverImage: item.content?.images.first,
+      coverImage: item.content?.images.firstOrNull,
     );
   }
 }

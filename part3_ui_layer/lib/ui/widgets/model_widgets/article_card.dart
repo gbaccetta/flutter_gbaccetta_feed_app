@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
 import 'package:intl/intl.dart';
 
@@ -33,8 +35,9 @@ class ArticleCard extends StatelessWidget {
                       // without at least a host cached network image throw
                       imageUrl: article.coverImage ?? 'https://',
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => const _CoverPlaceholder(),
-                      errorWidget: (_, __, ___) => const _CoverPlaceholder(),
+                      placeholder: (_, __) => const CoverPlaceholder(),
+                      errorWidget: (_, __, ___) => const CoverPlaceholder(),
+                      cacheManager: getIt<BaseCacheManager>(),
                     ),
                   ),
                   Positioned.fill(
@@ -96,8 +99,10 @@ class ArticleCard extends StatelessWidget {
   }
 }
 
-class _CoverPlaceholder extends StatelessWidget {
-  const _CoverPlaceholder();
+/// we make this visible for testing to check cached_network_image behavior
+@visibleForTesting
+class CoverPlaceholder extends StatelessWidget {
+  const CoverPlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {

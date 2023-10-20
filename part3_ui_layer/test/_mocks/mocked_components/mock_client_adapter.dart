@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 
+import '../../utils/test_utils.dart';
+
 enum ApiMethod { get, post, put, del }
 
 class MockClientAdapter {
@@ -24,7 +26,7 @@ class OnApiCall {
     reply() => (server) => server.reply(
           code,
           response ?? {},
-          delay: delay ?? const Duration(milliseconds: 100),
+          delay: delay ?? milliseconds1,
         );
 
     switch (method) {
