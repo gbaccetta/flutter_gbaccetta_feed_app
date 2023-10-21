@@ -28,7 +28,7 @@ void main() {
     await tester.pumpWidget(makeTestableWidget(child: view));
   }
 
-  group('init', () {
+  group('init -', () {
     testWidgets('with anyArticle', (tester) async {
       await init(tester);
       await tester.pump();

@@ -33,7 +33,7 @@ void main() {
     expect(vmState.isLoading, isFalse);
   });
 
-  group('tapOnLink', () {
+  group('tapOnLink -', () {
     test('tapOnLink should open external link', () async {
       viewModel.tapOnLink('https://www.google.com');
       verify(() => mockView.goToExternalLink('https://www.google.com'));
