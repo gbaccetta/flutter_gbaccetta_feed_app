@@ -11,11 +11,10 @@ void main() {
   });
 
   test('ApiService get initialized', () {
-    // ignore: unnecessary_type_check
-    expect(getIt<ApiService>() is ApiService, isTrue);
+    expect(getIt<ApiService>(), isA<ApiService>());
   });
 
   test('CacheManager get initialized', () {
-    expect(getIt<BaseCacheManager>() is DefaultCacheManager, isTrue);
+    expect(getIt<BaseCacheManager>(), isA<DefaultCacheManager>());
   });
 }
