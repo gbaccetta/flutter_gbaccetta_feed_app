@@ -12,11 +12,10 @@ void main() {
   });
 
   test('ApiService get initialized', () {
-    // ignore: unnecessary_type_check
-    expect(getIt<ApiService>() is ApiService, isTrue);
+    expect(getIt<ApiService>(), isA<ApiService>());
   });
 
   test('ArticleUsesCases get initialized with ArticleInteractor', () {
-    expect(getIt<ArticleUseCases>() is ArticleInteractor, isTrue);
+    expect(getIt<ArticleUseCases>(), isA<ArticleInteractor>());
   });
 }
