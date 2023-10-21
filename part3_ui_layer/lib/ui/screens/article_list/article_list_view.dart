@@ -28,7 +28,10 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
   @override
   Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
         appBar: AppBar(
-          title: Text('GBAccetta Portfolio', style: textTheme.titleLarge),
+          title: Text(
+            'GBAccetta Portfolio',
+            style: textTheme.titleLarge?.copyWith(color: Colors.white),
+          ),
         ),
         body: Stack(
           children: [

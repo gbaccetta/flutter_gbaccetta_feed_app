@@ -19,84 +19,79 @@ class ArticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: 140,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    // without an url cached network image would throw
-                    child: article.coverImage == null
-                        ? const CoverPlaceholder()
-                        : CachedNetworkImage(
-                            imageUrl: article.coverImage!,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => const CoverPlaceholder(),
-                            errorWidget: (_, __, ___) =>
-                                const CoverPlaceholder(),
-                            cacheManager: getIt<BaseCacheManager>(),
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          SizedBox(
+            height: 160,
+            width: double.infinity,
+            child: Card(
+                              elevation: 16,
+
+              clipBehavior: Clip.antiAlias,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),),
+              child: article.coverImage == null
+                  ? const CoverPlaceholder()
+                  : CachedNetworkImage(
+                      imageUrl: article.coverImage!,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => const CoverPlaceholder(),
+                      errorWidget: (_, __, ___) => const CoverPlaceholder(),
+                      cacheManager: getIt<BaseCacheManager>(),
+                    ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 95, 20, 8),
+              child: Card(
+              clipBehavior: Clip.antiAlias,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),),
+              child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16,16,16,4),
+                      child: Text(article.title, style: textTheme.titleMedium),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: article.keywords
+                            .map((k) => Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Chip(label: Text(k,), backgroundColor: Colors.green.shade100,),
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: onHideTap,
+                            icon: const Icon(Icons.remove_red_eye),
                           ),
-                  ),
-                  Positioned.fill(
-                    child: Container(
-                        alignment: Alignment.bottomLeft,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.white38,
-                              Colors.white,
-                            ],
+                          Text(
+                            DateFormat('dd MMMM yyyy').format(article.date),
+                            textAlign: TextAlign.end,
+                            style: textTheme.labelMedium,
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child:
-                              Text(article.title, style: textTheme.titleLarge),
-                        )),
-                  )
-                ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            SizedBox(
-              height: 48,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: article.keywords
-                    .map((k) => Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Chip(label: Text(k)),
-                        ))
-                    .toList(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: onHideTap,
-                    icon: const Icon(Icons.remove_red_eye),
-                  ),
-                  Text(
-                    DateFormat('dd MMMM yyyy').format(article.date),
-                    textAlign: TextAlign.end,
-                    style: textTheme.labelMedium,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -111,8 +106,7 @@ class CoverPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      alignment: Alignment.bottomLeft,
-      color: const Color.fromARGB(255, 160, 255, 225),
+      color: Colors.green,
       child: const Icon(Icons.article_rounded, size: 130, color: Colors.white),
     );
   }

@@ -28,8 +28,8 @@ class Article {
       keywords: item.categories?.map((e) => e.value).toList() ?? [],
       url: item.link ?? '',
       date: item.pubDate ?? DateTime.now(),
-      coverImage: item.content?.images.firstOrNull ??
-          regex.firstMatch(item.description ?? '')?.group(1),
+      coverImage: regex.firstMatch(item.description ?? '')?.group(1) ??
+          item.content?.images.firstOrNull,
     );
   }
 }

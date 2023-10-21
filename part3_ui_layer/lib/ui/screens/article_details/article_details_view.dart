@@ -3,6 +3,7 @@ import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_contract.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ArticleDetailsView extends StatefulWidget {
   final Article article;
@@ -36,7 +37,10 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
   @override
   Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
         appBar: AppBar(
-          title: Text('Content', style: textTheme.titleLarge),
+          title: Text(
+            'Content',
+            style: textTheme.titleLarge?.copyWith(color: Colors.white),
+          ),
         ),
         body: SizedBox.expand(
           child: Stack(
@@ -46,7 +50,10 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
-                      Html(data: _bodyHtml),
+                      Html(
+                        data: _bodyHtml,
+                        onLinkTap: (url, _, __) => vmContract.tapOnLink(url),
+                      ),
                       if (_isPremiumStory)
                         const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -74,4 +81,9 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
           child: const Icon(Icons.refresh),
         ),
       );
+
+  @override
+  void goToExternalLink(String url) {
+    launchUrlString(url);
+  }
 }

@@ -11,4 +11,11 @@ class ArticleDetailsViewModel
     await Future.delayed(const Duration(seconds: 1));
     stopLoadingState();
   }
+
+  @override
+  void tapOnLink(String? url) {
+    if (url != null) {
+      viewContract.goToExternalLink(url);
+    }
+  }
 }
