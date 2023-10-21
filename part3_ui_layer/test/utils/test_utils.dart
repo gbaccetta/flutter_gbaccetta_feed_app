@@ -35,7 +35,9 @@ _initializeMockModules() {
 }
 
 ///
-/// Methods for functional tests
+/// Creates a testable widget for functional testing of views. 
+/// It also enables the inclusion of a custom list of providers to initialize 
+/// the view in a specific state.
 ///
 Widget makeTestableWidget({
   required Widget child,

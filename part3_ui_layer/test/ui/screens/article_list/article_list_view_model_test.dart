@@ -18,6 +18,7 @@ void main() {
   late MockArticleListView mockView;
   late MockArticleInteractor mockArticleInteractor;
 
+  // this will run before each test, to setup our environment anew
   setUp(() {
     mockView = MockArticleListView();
     vmState = ArticleListVMState();

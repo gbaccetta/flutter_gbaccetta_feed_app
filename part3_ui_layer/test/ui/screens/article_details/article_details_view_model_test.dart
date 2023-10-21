@@ -1,10 +1,8 @@
-import 'package:flutter_gbaccetta_feed_app/domain/failures/api_error.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_contract.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../_mocks/mocked_components/generic_mocks.dart';
 import '../../../utils/test_utils.dart';
 
 class MockArticleDetailsView extends Mock
@@ -18,6 +16,7 @@ void main() {
   // create a mocked instance of the component surrounding the viewModel
   late MockArticleDetailsView mockView;
 
+  // this will run before each test, to setup our environment anew
   setUp(() {
     mockView = MockArticleDetailsView();
     vmState = ArticleDetailsVMState();

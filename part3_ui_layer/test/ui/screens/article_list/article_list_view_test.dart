@@ -35,8 +35,8 @@ void main() {
 
   Future<void> init(
     WidgetTester tester, {
-    int apiResponseCodeMediumRssFeed = 200,
-    String? apiResponseDataMediumRssFeed,
+    int? apiMediumRssFeedCode,
+    String? apiMediumRssFeedData,
   }) async {
     view = const ArticleListView();
     mockClientAdapter = getIt<MockClientAdapter>();
@@ -44,9 +44,9 @@ void main() {
     mockClientAdapter
         .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
         .thenAnswer(
-          apiResponseCodeMediumRssFeed,
-          response:
-              apiResponseDataMediumRssFeed ?? MediumRssFeedMocked().string_200,
+          apiMediumRssFeedCode ?? 200,
+          response: apiMediumRssFeedData ??
+              MediumRssFeedMocked().string_200_one_article,
         );
 
     await tester.pumpWidget(makeTestableWidget(child: view));
@@ -69,7 +69,7 @@ void main() {
     });
 
     testWidgets('fail with api error', (tester) async {
-      await init(tester, apiResponseCodeMediumRssFeed: 400);
+      await init(tester, apiMediumRssFeedCode: 400);
       await tester.pump();
 
       expect(loader, findsOneWidget);
@@ -87,7 +87,7 @@ void main() {
     testWidgets('return an empty list', (tester) async {
       await init(
         tester,
-        apiResponseDataMediumRssFeed: MediumRssFeedMocked().string_200_2,
+        apiMediumRssFeedData: MediumRssFeedMocked().string_200_empty_list,
       );
       await tester.pump();
 
@@ -106,10 +106,13 @@ void main() {
     testWidgets('render error placeholder for the cover', (tester) async {
       await init(
         tester,
-        // this mock value has an image without url
-        apiResponseDataMediumRssFeed: MediumRssFeedMocked().string_200_3,
+        // this mock value has two articles, one with a valid image url and 
+        // one without any image url, hence we expect only one placeholder
+        apiMediumRssFeedData: MediumRssFeedMocked().string_200_two_articles,
       );
       await tester.pumpAndSettle();
+      // this is a trick to have the cached_network_image actually process the
+      // mocked cache manager values
       await tester.runAsync(() => Future.delayed(milliseconds1));
       await tester.pumpAndSettle();
 
@@ -140,9 +143,10 @@ void main() {
 
   group('tap on fab -', () {
     testWidgets('should clear error than load 2 articles list', (tester) async {
+      // init the view with an error code 400 on the api call
       await init(
         tester,
-        apiResponseCodeMediumRssFeed: 400,
+        apiMediumRssFeedCode: 400,
       );
       await tester.pumpAndSettle();
 
@@ -150,9 +154,11 @@ void main() {
       expect(emptyListMessage, findsNothing);
       expect(error, findsOneWidget);
 
+      // tell our mocked client adaptor that next request should succeed
       mockClientAdapter
           .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
-          .thenAnswer(200, response: MediumRssFeedMocked().string_200_3);
+          .thenAnswer(200,
+              response: MediumRssFeedMocked().string_200_two_articles);
 
       await tester.tap(fab);
       await tester.pumpAndSettle();
@@ -162,10 +168,10 @@ void main() {
       expect(emptyListMessage, findsNothing);
     });
 
-    testWidgets('from empty list to an error', (tester) async {
+    testWidgets('after an empty list, get an api error', (tester) async {
       await init(
         tester,
-        apiResponseDataMediumRssFeed: MediumRssFeedMocked().string_200_2,
+        apiMediumRssFeedData: MediumRssFeedMocked().string_200_empty_list,
       );
       await tester.pumpAndSettle();
 

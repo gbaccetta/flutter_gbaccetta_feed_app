@@ -1,6 +1,6 @@
 class MediumRssFeedMocked {
   /// valid article with image
-  final string_200 = '''
+  final string_200_one_article = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -58,8 +58,9 @@ class MediumRssFeedMocked {
     </channel>
 </rss>
 ''';
+
   /// empty list of articles
-  final string_200_2 = '''
+  final string_200_empty_list = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -73,7 +74,7 @@ class MediumRssFeedMocked {
 ''';
 
   //valid article without image
-  final string_200_3 = '''
+  final string_200_two_articles = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"

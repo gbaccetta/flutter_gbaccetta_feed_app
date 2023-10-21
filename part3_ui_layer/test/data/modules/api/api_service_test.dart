@@ -17,7 +17,7 @@ void main() {
 
   group('getMediumRssFeed -', () {
     test('Successfully get articles from RSS fields', () async {
-      final data = MediumRssFeedMocked().string_200;
+      final data = MediumRssFeedMocked().string_200_one_article;
 
       mockClientAdapter!
           .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)

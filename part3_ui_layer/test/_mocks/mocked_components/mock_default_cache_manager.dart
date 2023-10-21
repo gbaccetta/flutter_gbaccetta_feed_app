@@ -24,7 +24,7 @@ class MockDefaultCacheManager extends Mock implements DefaultCacheManager {
     Map<String, String>? headers,
     bool withProgress = false,
   }) async* {
-    // during tests we will throw an error whenever the url is not an https url
+    // During tests, we throw an error whenever the URL is not an HTTPS URL.
     if (!url.startsWith('https://') || url == 'https://') {
       throw Exception('Invalid url');
     }
