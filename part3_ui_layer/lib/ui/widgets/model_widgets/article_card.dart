@@ -31,14 +31,17 @@ class ArticleCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: CachedNetworkImage(
-                      // without at least a host cached network image throw
-                      imageUrl: article.coverImage ?? 'https://',
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => const CoverPlaceholder(),
-                      errorWidget: (_, __, ___) => const CoverPlaceholder(),
-                      cacheManager: getIt<BaseCacheManager>(),
-                    ),
+                    // without an url cached network image would throw
+                    child: article.coverImage == null
+                        ? const CoverPlaceholder()
+                        : CachedNetworkImage(
+                            imageUrl: article.coverImage!,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => const CoverPlaceholder(),
+                            errorWidget: (_, __, ___) =>
+                                const CoverPlaceholder(),
+                            cacheManager: getIt<BaseCacheManager>(),
+                          ),
                   ),
                   Positioned.fill(
                     child: Container(

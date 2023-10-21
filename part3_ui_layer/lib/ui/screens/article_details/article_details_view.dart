@@ -26,6 +26,13 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
     vmState.article = widget.article;
   }
 
+  bool get _isPremiumStory => vmState.article.content.isEmpty;
+  String get _cleanedDescription => vmState.article.description.replaceAll(
+      RegExp('(width=".*?")'),
+      'width="${MediaQuery.of(context).size.width - 16}"');
+  String get _bodyHtml =>
+      !_isPremiumStory ? vmState.article.content : _cleanedDescription;
+
   @override
   Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
         appBar: AppBar(
@@ -37,7 +44,18 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
               Positioned.fill(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(8),
-                  child: Html(data: vmState.article.content),
+                  child: Column(
+                    children: [
+                      Html(data: _bodyHtml),
+                      if (_isPremiumStory)
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Chip(label: Text('PREMIUM STORY')),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
               // We've included this selector widget here for demonstration purposes,
