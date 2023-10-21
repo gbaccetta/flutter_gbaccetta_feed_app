@@ -43,7 +43,7 @@ void main() {
       verify(() => mockArticleInteractor.getArticles());
 
       // check async result
-      await Future.delayed(milliseconds1);
+      await Future.delayed(milliseconds10);
       expect(vmState.isLoading, isFalse);
       expect(vmState.hasError, isFalse);
       expect(vmState.articleList.length, 1);
@@ -65,7 +65,7 @@ void main() {
       verify(() => mockArticleInteractor.getArticles());
 
       // check async result
-      await Future.delayed(milliseconds1);
+      await Future.delayed(milliseconds10);
       expect(vmState.isLoading, isFalse);
       expect(vmState.hasError, isTrue);
       expect(vmState.articleList.length, 0);
@@ -105,7 +105,7 @@ void main() {
       verify(() => mockArticleInteractor.getArticles());
 
       // check async result
-      await Future.delayed(milliseconds1);
+      await Future.delayed(milliseconds10);
       expect(vmState.isLoading, isFalse);
       expect(vmState.hasError, isFalse);
       expect(vmState.articleList.length, 1);
@@ -128,7 +128,7 @@ void main() {
       verify(() => mockArticleInteractor.getArticles());
 
       // check async result
-      await Future.delayed(milliseconds1);
+      await Future.delayed(milliseconds10);
       expect(vmState.isLoading, isFalse);
       expect(vmState.hasError, isTrue);
       expect(vmState.articleList.length, 0);

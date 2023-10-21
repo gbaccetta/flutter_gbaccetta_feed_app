@@ -45,8 +45,8 @@ void main() {
         .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
         .thenAnswer(
           apiMediumRssFeedCode ?? 200,
-          response: apiMediumRssFeedData ??
-              MediumRssFeedMocked().string_200_one_article,
+          response:
+              apiMediumRssFeedData ?? MediumRssFeedMocked().string200OneArticle,
         );
 
     await tester.pumpWidget(makeTestableWidget(child: view));
@@ -87,7 +87,7 @@ void main() {
     testWidgets('return an empty list', (tester) async {
       await init(
         tester,
-        apiMediumRssFeedData: MediumRssFeedMocked().string_200_empty_list,
+        apiMediumRssFeedData: MediumRssFeedMocked().string200EmptyList,
       );
       await tester.pump();
 
@@ -106,14 +106,14 @@ void main() {
     testWidgets('render error placeholder for the cover', (tester) async {
       await init(
         tester,
-        // this mock value has two articles, one with a valid image url and 
-        // one without any image url, hence we expect only one placeholder
-        apiMediumRssFeedData: MediumRssFeedMocked().string_200_two_articles,
+        // this mock value has two articles, one with a valid image url and
+        // one with an invalid url, hence we expect only one placeholder
+        apiMediumRssFeedData: MediumRssFeedMocked().string200TwoArticles,
       );
       await tester.pumpAndSettle();
       // this is a trick to have the cached_network_image actually process the
       // mocked cache manager values
-      await tester.runAsync(() => Future.delayed(milliseconds1));
+      await tester.runAsync(() => Future.delayed(milliseconds10));
       await tester.pumpAndSettle();
 
       expect(articleCard, findsNWidgets(2));
@@ -158,7 +158,7 @@ void main() {
       mockClientAdapter
           .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
           .thenAnswer(200,
-              response: MediumRssFeedMocked().string_200_two_articles);
+              response: MediumRssFeedMocked().string200TwoArticles);
 
       await tester.tap(fab);
       await tester.pumpAndSettle();
@@ -171,7 +171,7 @@ void main() {
     testWidgets('after an empty list, get an api error', (tester) async {
       await init(
         tester,
-        apiMediumRssFeedData: MediumRssFeedMocked().string_200_empty_list,
+        apiMediumRssFeedData: MediumRssFeedMocked().string200EmptyList,
       );
       await tester.pumpAndSettle();
 

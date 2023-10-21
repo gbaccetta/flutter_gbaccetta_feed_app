@@ -26,7 +26,7 @@ class OnApiCall {
     reply() => (server) => server.reply(
           code,
           response ?? {},
-          delay: delay ?? milliseconds1,
+          delay: delay ?? milliseconds10,
         );
 
     switch (method) {

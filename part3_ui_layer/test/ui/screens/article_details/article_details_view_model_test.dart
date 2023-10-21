@@ -25,11 +25,23 @@ void main() {
     viewModel.vmState = vmState;
   });
 
-  test('tapOnHideArticle', () async {
+  test('tapOnRefreshPage should show loader', () async {
     // invoke method
     viewModel.tapOnRefreshPage();
     expect(vmState.isLoading, isTrue);
-    await Future.delayed(milliseconds1000);
+    await Future.delayed(seconds1);
     expect(vmState.isLoading, isFalse);
+  });
+
+  group('tapOnLink', () {
+    test('tapOnLink should open external link', () async {
+      viewModel.tapOnLink('https://www.google.com');
+      verify(() => mockView.goToExternalLink('https://www.google.com'));
+    });
+    test('tapOnLink should do nothing if null', () async {
+      // invoke method
+      viewModel.tapOnLink(null);
+      verifyNever(() => mockView.goToExternalLink(any()));
+    });
   });
 }

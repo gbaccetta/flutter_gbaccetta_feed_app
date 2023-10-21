@@ -35,8 +35,8 @@ _initializeMockModules() {
 }
 
 ///
-/// Creates a testable widget for functional testing of views. 
-/// It also enables the inclusion of a custom list of providers to initialize 
+/// Creates a testable widget for functional testing of views.
+/// It also enables the inclusion of a custom list of providers to initialize
 /// the view in a specific state.
 ///
 Widget makeTestableWidget({
@@ -60,13 +60,21 @@ final _defaultTestProviders = [
 ///
 /// Frequently used values
 ///
-const milliseconds1 = Duration(milliseconds: 1);
+const milliseconds10 = Duration(milliseconds: 10);
 const milliseconds100 = Duration(milliseconds: 100);
-const milliseconds1000 = Duration(milliseconds: 1000);
+const seconds1 = Duration(seconds: 1);
 final anyArticle = Article(
   title: 'title',
   description: 'description',
-  content: 'content',
+  content: '<a href=url>content</a>',
+  keywords: ['1', '2'],
+  url: 'url',
+  date: DateTime(2023),
+);
+final anyPremiumArticle = Article(
+  title: 'title',
+  description: 'description',
+  content: '',
   keywords: ['1', '2'],
   url: 'url',
   date: DateTime(2023),

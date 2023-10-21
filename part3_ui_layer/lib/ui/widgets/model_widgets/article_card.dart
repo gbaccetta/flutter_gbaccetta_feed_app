@@ -27,11 +27,11 @@ class ArticleCard extends StatelessWidget {
             height: 160,
             width: double.infinity,
             child: Card(
-                              elevation: 16,
-
+              elevation: 16,
               clipBehavior: Clip.antiAlias,
               shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),),
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
               child: article.coverImage == null
                   ? const CoverPlaceholder()
                   : CachedNetworkImage(
@@ -48,13 +48,14 @@ class ArticleCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 95, 20, 8),
               child: Card(
-              clipBehavior: Clip.antiAlias,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),),
-              child: Column(
+                clipBehavior: Clip.antiAlias,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16,16,16,4),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
                       child: Text(article.title, style: textTheme.titleMedium),
                     ),
                     SizedBox(
@@ -64,7 +65,12 @@ class ArticleCard extends StatelessWidget {
                         children: article.keywords
                             .map((k) => Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Chip(label: Text(k,), backgroundColor: Colors.green.shade100,),
+                                  child: Chip(
+                                    label: Text(
+                                      k,
+                                    ),
+                                    backgroundColor: Colors.green.shade100,
+                                  ),
                                 ))
                             .toList(),
                       ),

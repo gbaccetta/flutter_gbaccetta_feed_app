@@ -1,4 +1,5 @@
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
 import 'package:file/memory.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:mocktail/mocktail.dart';
@@ -25,7 +26,7 @@ class MockDefaultCacheManager extends Mock implements DefaultCacheManager {
     bool withProgress = false,
   }) async* {
     // During tests, we throw an error whenever the URL is not an HTTPS URL.
-    if (!url.startsWith('https://') || url == 'https://') {
+    if (!url.startsWith('https://')) {
       throw Exception('Invalid url');
     }
     initFile();

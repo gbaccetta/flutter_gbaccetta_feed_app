@@ -1,6 +1,6 @@
 class MediumRssFeedMocked {
   /// valid article with image
-  final string_200_one_article = '''
+  final string200OneArticle = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -60,7 +60,7 @@ class MediumRssFeedMocked {
 ''';
 
   /// empty list of articles
-  final string_200_empty_list = '''
+  final string200EmptyList = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -74,7 +74,7 @@ class MediumRssFeedMocked {
 ''';
 
   //valid article without image
-  final string_200_two_articles = '''
+  final string200TwoArticles = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -115,7 +115,7 @@ class MediumRssFeedMocked {
           <atom:updated>2021-04-19T18:50:57.968Z</atom:updated>
           <cc:license>http://creativecommons.org/publicdomain/zero/1.0/</cc:license>
           <content:encoded>
-          <![CDATA[ <h3>Flutter Enum — How to exchange values with your Backend and/or your app UI since Dart 2.6 thanks to extensions</h3><h3>Introduction</h3>]]>
+          <![CDATA[ <h3>Flutter Enum — How to exchange values with your Backend and/or your app UI since Dart 2.6 thanks to extensions</h3><h3>Introduction</h3><img src="wrong_url">]]>
           </content:encoded>
         </item>
         <item>
