@@ -112,7 +112,7 @@ void main() {
       expect(vmState.articleVisibilityList.length, 1);
       expect(vmState.articleVisibilityList.first, isTrue);
     });
-    test('fail with ApiError, but lists should be cleared', () async {
+    test('fail with ApiError, keep existing list, show snackbar', () async {
       // set initial state and define mock behavior
       vmState.articleList.addAll([anyArticle, anyArticle]);
       vmState.articleVisibilityList.addAll([false, false]);
@@ -131,11 +131,12 @@ void main() {
       await Future.delayed(milliseconds10);
       expect(vmState.isLoading, isFalse);
       expect(vmState.hasError, isTrue);
-      expect(vmState.articleList.length, 0);
-      expect(vmState.articleVisibilityList.length, 0);
+      expect(vmState.articleList.length, 2);
+      expect(vmState.articleVisibilityList.length, 2);
+      verify(mockView.showErrorRetrievingArticlesSnackbar);
     });
 
-    test('fail with another exception, but lists still cleared', () {
+    test('fail with another exception, keep lists, show snackbar', () {
       // set initial state and define mock behavior
       vmState.articleList.addAll([anyArticle, anyArticle]);
       vmState.articleVisibilityList.addAll([false, false]);
@@ -148,8 +149,9 @@ void main() {
       verify(() => mockArticleInteractor.getArticles());
       expect(vmState.isLoading, isFalse);
       expect(vmState.hasError, isTrue);
-      expect(vmState.articleList.length, 0);
-      expect(vmState.articleVisibilityList.length, 0);
+      expect(vmState.articleList.length, 2);
+      expect(vmState.articleVisibilityList.length, 2);
+      verify(mockView.showErrorRetrievingArticlesSnackbar);
     });
   });
 

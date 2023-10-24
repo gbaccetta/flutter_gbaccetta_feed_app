@@ -17,7 +17,8 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     ArticleListView,
     ArticleListVMContract,
     ArticleListVMState> implements ArticleListViewContract {
-  bool get _showList => !vmState.hasError && vmState.articleList.isNotEmpty;
+  bool get _showList => vmState.articleList.isNotEmpty;
+  bool get _showError => vmState.hasError && vmState.articleList.isEmpty;
   bool get _showPlaceholder =>
       !vmState.hasError &&
       !vmState.isLoading &&
@@ -26,45 +27,46 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
   void onInitState() {}
 
   @override
-  Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'GBAccetta Portfolio',
-            style: textTheme.titleLarge?.copyWith(color: Colors.white),
-          ),
+  Widget contentBuilder(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'GBAccetta Portfolio',
+          style: textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        body: Stack(
-          children: [
-            if (_showList)
-              ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                itemCount: vmState.articleList.length,
-                itemBuilder: (context, index) => AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
-                  child: vmState.articleVisibilityList[index]
-                      ? ArticleCard(
-                          article: vmState.articleList[index],
-                          onTap: () => vmContract.tapOnArticle(index),
-                          onHideTap: () => vmContract.tapOnHideArticle(index),
-                        )
-                      : const SizedBox(),
-                ),
+      ),
+      body: Stack(
+        children: [
+          if (_showList)
+            ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: vmState.articleList.length,
+              itemBuilder: (context, index) => AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                child: vmState.articleVisibilityList[index]
+                    ? ArticleCard(
+                        article: vmState.articleList[index],
+                        onTap: () => vmContract.tapOnArticle(index),
+                        onHideTap: () => vmContract.tapOnHideArticle(index),
+                      )
+                    : const SizedBox(),
               ),
-            if (_showPlaceholder)
-              const ScreenErrorWidget(
-                error: 'WOW!\n🚨\nNo articles in the list',
-              ),
-            if (vmState.hasError)
-              ScreenErrorWidget(
-                  onButtonTap: vmContract.tapOnRefreshArticleList),
-            if (vmState.isLoading) const ScreenLoaderWidget(),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: vmContract.tapOnRefreshArticleList,
-          child: const Icon(Icons.refresh),
-        ),
-      );
+            ),
+          if (_showPlaceholder)
+            const ScreenErrorWidget(
+              error: 'WOW!\n🚨\nNo articles in the list',
+            ),
+          if (_showError)
+            ScreenErrorWidget(onButtonTap: vmContract.tapOnRefreshArticleList),
+          if (vmState.isLoading) const ScreenLoaderWidget(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vmContract.tapOnRefreshArticleList,
+        child: const Icon(Icons.refresh),
+      ),
+    );
+  }
 
   @override
   void goToArticleDetailsScreen(int index) {
@@ -72,5 +74,12 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => ArticleDetailsView(article: vmState.articleList[index]),
     ));
+  }
+
+  @override
+  void showErrorRetrievingArticlesSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ouch 🚨! There was an error... 🤦‍♂️')),
+    );
   }
 }

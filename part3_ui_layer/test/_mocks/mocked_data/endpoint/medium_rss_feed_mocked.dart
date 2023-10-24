@@ -1,6 +1,6 @@
 class MediumRssFeedMocked {
   /// valid article with image
-  final string200OneArticle = '''
+  static const string200OneArticle = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -60,7 +60,7 @@ class MediumRssFeedMocked {
 ''';
 
   /// empty list of articles
-  final string200EmptyList = '''
+  static const string200EmptyList = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"
@@ -74,7 +74,7 @@ class MediumRssFeedMocked {
 ''';
 
   //valid article without image
-  final string200TwoArticles = '''
+  static const string200TwoArticles = '''
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:content="http://purl.org/rss/1.0/modules/content/"
     xmlns:atom="http://www.w3.org/2005/Atom"

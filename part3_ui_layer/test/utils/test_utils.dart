@@ -63,6 +63,7 @@ final _defaultTestProviders = [
 const milliseconds10 = Duration(milliseconds: 10);
 const milliseconds100 = Duration(milliseconds: 100);
 const seconds1 = Duration(seconds: 1);
+const seconds10 = Duration(seconds: 10);
 final anyArticle = Article(
   title: 'title',
   description: 'description',

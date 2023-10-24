@@ -8,6 +8,7 @@ class ArticleListVMState extends BaseViewModelState {
 
 abstract class ArticleListViewContract extends BaseViewContract {
   void goToArticleDetailsScreen(int index);
+  void showErrorRetrievingArticlesSnackbar();
 }
 
 abstract class ArticleListVMContract

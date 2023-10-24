@@ -35,52 +35,54 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
       !_isPremiumStory ? vmState.article.content : _cleanedDescription;
 
   @override
-  Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Content',
-            style: textTheme.titleLarge?.copyWith(color: Colors.white),
-          ),
+  Widget contentBuilder(context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Content',
+          style: textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        body: SizedBox.expand(
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      Html(
-                        data: _bodyHtml,
-                        onLinkTap: (url, _, __) => vmContract.tapOnLink(url),
-                      ),
-                      if (_isPremiumStory)
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Chip(label: Text('PREMIUM STORY')),
-                          ),
+      ),
+      body: SizedBox.expand(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    Html(
+                      data: _bodyHtml,
+                      onLinkTap: (url, _, __) => vmContract.tapOnLink(url),
+                    ),
+                    if (_isPremiumStory)
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Chip(label: Text('PREMIUM STORY')),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
-              // We've included this selector widget here for demonstration purposes,
-              // in contrast to the default implementation that uses viewConsumerWidget.
-              viewSelectorWidget(
-                selector: (vmState) => vmState.isLoading,
-                builder: (_) => vmState.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : const SizedBox(),
-              ),
-            ],
-          ),
+            ),
+            // We've included this selector widget here for demonstration purposes,
+            // in contrast to the default implementation that uses viewConsumerWidget.
+            viewSelectorWidget(
+              selector: (vmState) => vmState.isLoading,
+              builder: (_) => vmState.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : const SizedBox(),
+            ),
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: vmContract.tapOnRefreshPage,
-          child: const Icon(Icons.refresh),
-        ),
-      );
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vmContract.tapOnRefreshPage,
+        child: const Icon(Icons.refresh),
+      ),
+    );
+  }
 
   @override
   void goToExternalLink(String url) {

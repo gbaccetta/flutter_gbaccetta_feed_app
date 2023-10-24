@@ -32,6 +32,7 @@ void main() {
   final error = find.byType(ScreenErrorWidget);
   final coverPlaceholder = find.byType(CoverPlaceholder);
   final emptyListMessage = find.text('WOW!\n🚨\nNo articles in the list');
+  final errorSnackBar = find.text('Ouch 🚨! There was an error... 🤦‍♂️');
 
   Future<void> init(
     WidgetTester tester, {
@@ -46,7 +47,7 @@ void main() {
         .thenAnswer(
           apiMediumRssFeedCode ?? 200,
           response:
-              apiMediumRssFeedData ?? MediumRssFeedMocked().string200OneArticle,
+              apiMediumRssFeedData ?? MediumRssFeedMocked.string200OneArticle,
         );
 
     await tester.pumpWidget(makeTestableWidget(child: view));
@@ -87,7 +88,7 @@ void main() {
     testWidgets('return an empty list', (tester) async {
       await init(
         tester,
-        apiMediumRssFeedData: MediumRssFeedMocked().string200EmptyList,
+        apiMediumRssFeedData: MediumRssFeedMocked.string200EmptyList,
       );
       await tester.pump();
 
@@ -108,7 +109,7 @@ void main() {
         tester,
         // this mock value has two articles, one with a valid image url and
         // one with an invalid url, hence we expect only one placeholder
-        apiMediumRssFeedData: MediumRssFeedMocked().string200TwoArticles,
+        apiMediumRssFeedData: MediumRssFeedMocked.string200TwoArticles,
       );
       await tester.pumpAndSettle();
       // this is a trick to have the cached_network_image actually process the
@@ -142,52 +143,109 @@ void main() {
   });
 
   group('tap on fab -', () {
-    testWidgets('should clear error than load 2 articles list', (tester) async {
-      // init the view with an error code 400 on the api call
-      await init(
-        tester,
-        apiMediumRssFeedCode: 400,
-      );
-      await tester.pumpAndSettle();
+    group('successful refresh -', () {
+      testWidgets('from existing list - load new list', (tester) async {
+        // init the view with a one article list
+        await init(
+          tester,
+          apiMediumRssFeedData: MediumRssFeedMocked.string200OneArticle,
+        );
+        await tester.pumpAndSettle();
 
-      expect(articleCard, findsNothing);
-      expect(emptyListMessage, findsNothing);
-      expect(error, findsOneWidget);
+        expect(articleCard, findsOneWidget);
 
-      // tell our mocked client adaptor that next request should succeed
-      mockClientAdapter
-          .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
-          .thenAnswer(200,
-              response: MediumRssFeedMocked().string200TwoArticles);
+        // tell our mocked client adaptor that next request should succeed
+        mockClientAdapter
+            .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
+            .thenAnswer(200,
+                response: MediumRssFeedMocked.string200TwoArticles);
 
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
 
-      expect(articleCard, findsNWidgets(2));
-      expect(error, findsNothing);
-      expect(emptyListMessage, findsNothing);
+        expect(articleCard, findsNWidgets(2));
+      });
+      testWidgets('clear initial error - load new list', (tester) async {
+        // init the view with an error code 400 on the api call
+        await init(
+          tester,
+          apiMediumRssFeedCode: 400,
+        );
+        await tester.pumpAndSettle();
+
+        expect(articleCard, findsNothing);
+        expect(emptyListMessage, findsNothing);
+        expect(error, findsOneWidget);
+
+        // tell our mocked client adaptor that next request should succeed
+        mockClientAdapter
+            .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
+            .thenAnswer(200,
+                response: MediumRssFeedMocked.string200TwoArticles);
+
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
+
+        expect(articleCard, findsNWidgets(2));
+        expect(error, findsNothing);
+        expect(emptyListMessage, findsNothing);
+      });
     });
+    group('get api error -', () {
+      testWidgets('from empty list - show error and snackbar', (tester) async {
+        await init(
+          tester,
+          apiMediumRssFeedData: MediumRssFeedMocked.string200EmptyList,
+        );
+        await tester.pumpAndSettle();
 
-    testWidgets('after an empty list, get an api error', (tester) async {
-      await init(
-        tester,
-        apiMediumRssFeedData: MediumRssFeedMocked().string200EmptyList,
-      );
-      await tester.pumpAndSettle();
+        expect(articleCard, findsNothing);
+        expect(emptyListMessage, findsOneWidget);
 
-      expect(articleCard, findsNothing);
-      expect(emptyListMessage, findsOneWidget);
+        mockClientAdapter
+            .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
+            .thenAnswer(400);
 
-      mockClientAdapter
-          .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
-          .thenAnswer(400);
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
 
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
+        expect(articleCard, findsNothing);
+        expect(error, findsOneWidget);
+        expect(emptyListMessage, findsNothing);
+        expect(errorSnackBar, findsOneWidget);
 
-      expect(articleCard, findsNothing);
-      expect(error, findsOneWidget);
-      expect(emptyListMessage, findsNothing);
+        //wait for snackbar to disappear
+        await tester.pumpAndSettle(seconds10);
+
+        expect(errorSnackBar, findsNothing);
+      });
+
+      testWidgets('from full list - keep list but show snackbar',
+          (tester) async {
+        await init(
+          tester,
+          apiMediumRssFeedData: MediumRssFeedMocked.string200TwoArticles,
+        );
+        await tester.pumpAndSettle();
+
+        expect(articleCard, findsNWidgets(2));
+
+        mockClientAdapter
+            .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
+            .thenAnswer(400);
+
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
+
+        expect(articleCard, findsNWidgets(2));
+        expect(error, findsNothing);
+        expect(errorSnackBar, findsOneWidget);
+
+        //wait for snackbar to disappear
+        await tester.pumpAndSettle(seconds10);
+
+        expect(errorSnackBar, findsNothing);
+      });
     });
   });
 }

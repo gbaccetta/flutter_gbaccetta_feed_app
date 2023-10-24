@@ -32,19 +32,24 @@ class ArticleListViewModel
   }
 
   Future<void> _refreshArticleList() async {
-    vmState.articleList.clear();
-    vmState.articleVisibilityList.clear();
     vmState.hasError = false;
     try {
       final articles = await _articleInteractor.getArticles();
+      _clearLists();
       vmState.articleList.addAll(articles);
       vmState.articleVisibilityList.addAll(articles.map((e) => true));
     } catch (e) {
       vmState.hasError = true;
+      viewContract.showErrorRetrievingArticlesSnackbar();
       if (e is ApiError) {
       } else {}
     }
     stopLoadingState();
+  }
+
+  void _clearLists() {
+    vmState.articleList.clear();
+    vmState.articleVisibilityList.clear();
   }
 
   @override
