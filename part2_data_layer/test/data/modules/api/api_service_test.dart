@@ -17,14 +17,12 @@ void main() {
 
   group('getMediumRssFeed -', () {
     test('Successfully get articles from RSS fields', () async {
-      final data = MediumRssFeedMocked().string_200;
-
       mockClientAdapter!
           .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
-          .thenAnswer(200, response: data);
+          .thenAnswer(200, response: MediumRssFeedMocked.string_200);
 
       final result = await apiService!.getMediumRssFeed();
-      expect(result.data, data);
+      expect(result.data, MediumRssFeedMocked.string_200);
       expect(result.statusCode, 200);
     });
 

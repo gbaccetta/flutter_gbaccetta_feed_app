@@ -19,7 +19,7 @@ void main() {
     when(() => mockApiService.getMediumRssFeed()).thenAnswer(
       (_) => Future.value(
         Response(
-          data: MediumRssFeedMocked().string_200,
+          data: MediumRssFeedMocked.string_200,
           requestOptions: RequestOptions(),
         ),
       ),
