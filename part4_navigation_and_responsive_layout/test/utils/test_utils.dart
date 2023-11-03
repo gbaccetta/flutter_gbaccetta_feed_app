@@ -5,7 +5,7 @@ import 'package:flutter_gbaccetta_feed_app/core/locators/locator_interactors.dar
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator_screens.dart';
 import 'package:flutter_gbaccetta_feed_app/data/modules/api/api_service.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/user.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
 import 'package:provider/provider.dart';
 
 import '../_mocks/mocked_components/mock_client_adapter.dart';
@@ -63,7 +63,9 @@ final _defaultTestProviders = [
 const milliseconds10 = Duration(milliseconds: 10);
 const milliseconds100 = Duration(milliseconds: 100);
 const seconds1 = Duration(seconds: 1);
+const seconds10 = Duration(seconds: 10);
 final anyArticle = Article(
+  id: 'id1',
   title: 'title',
   description: 'description',
   content: '<a href=url>content</a>',
@@ -72,6 +74,7 @@ final anyArticle = Article(
   date: DateTime(2023),
 );
 final anyPremiumArticle = Article(
+  id: 'id2',
   title: 'title',
   description: 'description',
   content: '',

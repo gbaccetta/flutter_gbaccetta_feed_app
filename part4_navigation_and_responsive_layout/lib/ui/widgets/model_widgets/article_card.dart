@@ -44,6 +44,7 @@ class ArticleCard extends StatelessWidget {
             ),
           ),
           SizedBox(
+            height: 270,
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 95, 20, 8),
@@ -54,9 +55,15 @@ class ArticleCard extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-                      child: Text(article.title, style: textTheme.titleMedium),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                        child: Text(
+                          article.title,
+                          style: textTheme.titleMedium,
+                          maxLines: 3,
+                        ),
+                      ),
                     ),
                     SizedBox(
                       height: 40,

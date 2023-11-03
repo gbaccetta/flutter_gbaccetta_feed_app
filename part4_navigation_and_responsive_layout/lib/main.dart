@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/user.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/routing/router.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view.dart';
 import 'package:provider/provider.dart';
 
@@ -18,13 +21,15 @@ class GBAccettaApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => User(id: 'id', name: 'name')),
+        ChangeNotifierProvider(create: (_) => ArticleList())
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
+        color: Colors.white,
         title: 'GBAccetta Portfolio',
         // TODO app theming will be addressed in part 5 of this guide
         theme: ThemeData(primarySwatch: Colors.green),
         // TODO proper navigation will be addressed in part 4 of this guide
-        home: const ArticleListView(),
+        routerConfig: AppRouter.simpleRouter,
       ),
     );
   }

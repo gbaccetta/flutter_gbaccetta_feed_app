@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/user.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
 
 /// BaseViewModelState: This abstract class holds properties commonly used by
 /// most views. It includes features like tracking data loading status, error

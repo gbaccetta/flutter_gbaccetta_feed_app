@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/user.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_contract.dart';
 import 'package:provider/provider.dart';
 
@@ -61,13 +61,13 @@ abstract class BaseViewWidgetState<SW extends StatefulWidget,
   Widget build(BuildContext context) => ChangeNotifierProvider<VMC>(
         create: (_) => vmContract,
         child: autoSubscribeToVmStateChanges
-            ? viewConsumerWidget(builder: contentBuilder())
-            : contentBuilder().call(context),
+            ? viewConsumerWidget(builder: (context) => contentBuilder(context))
+            : contentBuilder(context),
       );
 
   /// Override this method to build the view using the [viewModelState].
   /// Ensure you don't directly override the build method to include the Provider in the widget tree.
-  Widget Function(BuildContext context) contentBuilder();
+  Widget contentBuilder(BuildContext context);
 
   /// Use this method for view initialization tasks, such as retrieving information from
   /// top-level providers (e.g., User) using `context.read<ProviderObject>())`,

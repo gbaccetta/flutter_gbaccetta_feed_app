@@ -1,6 +1,7 @@
 import 'package:webfeed_plus/webfeed_plus.dart';
 
 class Article {
+  final String id;
   final String title;
   final String description;
   final String content;
@@ -10,6 +11,7 @@ class Article {
   final String? coverImage;
 
   Article({
+    required this.id,
     required this.title,
     required this.description,
     required this.content,
@@ -22,6 +24,7 @@ class Article {
   factory Article.fromRssItem(RssItem item) {
     final regex = RegExp('<img.+src=(?:"|\')(.+?)(?:"|\')(?:.+?)>');
     return Article(
+      id: item.guid!,
       title: item.title ?? '',
       description: item.description ?? '',
       content: item.content?.value ?? '',

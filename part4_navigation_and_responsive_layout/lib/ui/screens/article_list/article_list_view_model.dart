@@ -13,11 +13,26 @@ class ArticleListViewModel
   }) : _articleInteractor = articleInteractor;
 
   @override
-  void onInitState() {
-    // In the onInitState the widget tree is not built yet hence the call to
-    // notifyListener() is not needed
-    vmState.isLoading = true;
-    _refreshArticleList();
+  Future<void> onInitState() async {
+    if (vmState.articleList.isEmpty) {
+      // In the onInitState the widget tree is not built yet hence the call to
+      // notifyListener() is not needed
+      vmState.isLoading = true;
+      await _refreshArticleList();
+    } else {
+      vmState.articleVisibilityList.addAll(
+        vmState.articleList.map((e) => true),
+      );
+    }
+    // if there was a query parameter for a given article try to open it
+    if (!vmState.hasError && vmState.initialArticleId != null) {
+      final initialArticleIndex = vmState.articleList.indexWhere(
+        (article) => article.id == vmState.initialArticleId,
+      );
+      if (initialArticleIndex >= 0) {
+        viewContract.goToArticleDetailsScreen(initialArticleIndex);
+      }
+    }
   }
 
   @override
@@ -32,19 +47,24 @@ class ArticleListViewModel
   }
 
   Future<void> _refreshArticleList() async {
-    vmState.articleList.clear();
-    vmState.articleVisibilityList.clear();
     vmState.hasError = false;
     try {
       final articles = await _articleInteractor.getArticles();
+      _clearLists();
       vmState.articleList.addAll(articles);
       vmState.articleVisibilityList.addAll(articles.map((e) => true));
     } catch (e) {
       vmState.hasError = true;
+      viewContract.showErrorRetrievingArticlesSnackbar();
       if (e is ApiError) {
       } else {}
     }
     stopLoadingState();
+  }
+
+  void _clearLists() {
+    vmState.articleList.clear();
+    vmState.articleVisibilityList.clear();
   }
 
   @override

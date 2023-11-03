@@ -27,15 +27,29 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
     vmState.article = widget.article;
   }
 
+  late double maxHeight;
+  late double maxWidth;
+
   bool get _isPremiumStory => vmState.article.content.isEmpty;
-  String get _cleanedDescription => vmState.article.description.replaceAll(
-      RegExp('(width=".*?")'),
-      'width="${MediaQuery.of(context).size.width - 16}"');
+  String get _improvedDescription => maxWidth > maxHeight
+      ? vmState.article.description
+          .replaceAll(RegExp('(width=".*?")'), 'height="$maxHeight"')
+      : vmState.article.description
+          .replaceAll(RegExp('(width=".*?")'), 'width="$maxWidth"');
+  String get _improvedContent => maxWidth > maxHeight
+      ? vmState.article.content
+          .replaceAll('<img alt=', '<img height="$maxHeight" alt=')
+      : vmState.article.content
+          .replaceAll('<img alt=', '<img width="$maxWidth" alt=');
   String get _bodyHtml =>
-      !_isPremiumStory ? vmState.article.content : _cleanedDescription;
+      !_isPremiumStory ? _improvedContent : _improvedDescription;
 
   @override
-  Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
+  Widget contentBuilder(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      maxHeight = constraints.maxHeight * 0.60;
+      maxWidth = constraints.maxWidth * 0.60;
+      return Scaffold(
         appBar: AppBar(
           title: Text(
             'Content',
@@ -53,6 +67,9 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
                       Html(
                         data: _bodyHtml,
                         onLinkTap: (url, _, __) => vmContract.tapOnLink(url),
+                        style: {
+                          'html': Style(textAlign: TextAlign.center),
+                        },
                       ),
                       if (_isPremiumStory)
                         const Padding(
@@ -81,6 +98,8 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
           child: const Icon(Icons.refresh),
         ),
       );
+    });
+  }
 
   @override
   void goToExternalLink(String url) {

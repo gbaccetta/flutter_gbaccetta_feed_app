@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
-import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_contract.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/widgets/generic_widgets/screen_error_widget.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/widgets/generic_widgets/screen_loader_widget.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/widgets/model_widgets/article_card.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ArticleListView extends StatefulWidget {
-  const ArticleListView({super.key});
+  final String? initialArticleId;
+  const ArticleListView({super.key, this.initialArticleId});
 
   @override
   State<ArticleListView> createState() => _ArticleListViewWidgetState();
@@ -17,60 +22,106 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     ArticleListView,
     ArticleListVMContract,
     ArticleListVMState> implements ArticleListViewContract {
-  bool get _showList => !vmState.hasError && vmState.articleList.isNotEmpty;
+  late double maxCardWidth;
+  bool get _showList => vmState.articleList.isNotEmpty;
+  bool get _showError => vmState.hasError && vmState.articleList.isEmpty;
   bool get _showPlaceholder =>
       !vmState.hasError &&
       !vmState.isLoading &&
       !vmState.articleVisibilityList.contains(true);
   @override
-  void onInitState() {}
+  void onInitState() {
+    vmState.articleListProvider = context.read<ArticleList>();
+    vmState.initialArticleId = widget.initialArticleId;
+  }
 
   @override
-  Widget Function(BuildContext) contentBuilder() => (context) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'GBAccetta Portfolio',
-            style: textTheme.titleLarge?.copyWith(color: Colors.white),
-          ),
+  Widget contentBuilder(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'GBAccetta Portfolio',
+          style: textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
-        body: Stack(
-          children: [
-            if (_showList)
-              ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                itemCount: vmState.articleList.length,
-                itemBuilder: (context, index) => AnimatedSize(
+      ),
+      body: Stack(
+        children: [
+          if (_showList)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LayoutBuilder(builder: (context, constraints) {
+                maxCardWidth =
+                    constraints.maxWidth / (constraints.maxWidth ~/ 300);
+                return SingleChildScrollView(
+                  child: Wrap(
+                    children: List.generate(
+                      vmState.articleList.length,
+                      (index) => _articleListItem(index),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          if (_showPlaceholder)
+            const ScreenErrorWidget(
+              error: 'WOW!\n🚨\nNo articles in the list',
+            ),
+          if (_showError)
+            ScreenErrorWidget(onButtonTap: vmContract.tapOnRefreshArticleList),
+          if (vmState.isLoading) const ScreenLoaderWidget(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vmContract.tapOnRefreshArticleList,
+        child: const Icon(Icons.refresh),
+      ),
+    );
+  }
+
+  Widget _articleListItem(int index) {
+    return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxCardWidth),
+        child: AnimatedSize(
                   duration: const Duration(milliseconds: 300),
-                  child: vmState.articleVisibilityList[index]
-                      ? ArticleCard(
-                          article: vmState.articleList[index],
-                          onTap: () => vmContract.tapOnArticle(index),
-                          onHideTap: () => vmContract.tapOnHideArticle(index),
-                        )
-                      : const SizedBox(),
+          child: vmState.articleVisibilityList[index]
+              ? _article(index)
+              : TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 1, end: 0),
+                  duration: const Duration(milliseconds: 300),
+                  builder: (context, animatedValue, child) {
+                    if (animatedValue == 0) {
+                      return const SizedBox();
+                    }
+                    return Opacity(
+                      opacity: animatedValue,
+                      child: _article(index),
+                    );
+                  },
                 ),
-              ),
-            if (_showPlaceholder)
-              const ScreenErrorWidget(
-                error: 'WOW!\n🚨\nNo articles in the list',
-              ),
-            if (vmState.hasError)
-              ScreenErrorWidget(
-                  onButtonTap: vmContract.tapOnRefreshArticleList),
-            if (vmState.isLoading) const ScreenLoaderWidget(),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: vmContract.tapOnRefreshArticleList,
-          child: const Icon(Icons.refresh),
-        ),
-      );
+        ));
+  }
+
+  ArticleCard _article(int index) {
+    return ArticleCard(
+      key: Key(index.toString()),
+      article: vmState.articleList[index],
+      onTap: () => vmContract.tapOnArticle(index),
+      onHideTap: () => vmContract.tapOnHideArticle(index),
+    );
+  }
 
   @override
   void goToArticleDetailsScreen(int index) {
-    // TODO: this is not the ideal way to navigate. We will explore navigation in part4 of our tutorial
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => ArticleDetailsView(article: vmState.articleList[index]),
-    ));
+    context.goNamed(
+      RoutesNames.articleDetails,
+      pathParameters: {PathParams.articleId: vmState.articleList[index].id},
+    );
+  }
+
+  @override
+  void showErrorRetrievingArticlesSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ouch 🚨! There was an error... 🤦‍♂️')),
+    );
   }
 }
