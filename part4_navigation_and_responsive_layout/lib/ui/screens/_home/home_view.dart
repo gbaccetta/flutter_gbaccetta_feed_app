@@ -44,67 +44,71 @@ class _HomeViewState
 
   @override
   Widget contentBuilder(BuildContext context) {
-    return AdaptiveLayout(
-      internalAnimations: false,
-      // Primary navigation config has nothing from 0 to 600 dp screen width,
-      // then an unextended NavigationRail with no labels and just icons then an
-      // extended NavigationRail with both icons and labels.
-      primaryNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig>{
-          // On medium screen we will use a navigation rail
-          Breakpoints.medium: SlotLayout.from(
-            key: const Key('Primary Navigation Medium'),
-            builder: (_) => AdaptiveScaffold.standardNavigationRail(
-              padding: EdgeInsets.zero,
-              selectedIndex: widget.navigationShell.currentIndex,
-              onDestinationSelected: vmContract.onSelectedIndexChange,
-              destinations: _destinations
-                  .map((item) => _toRailDestination(item))
-                  .toList(),
+    return Scaffold(
+      body: AdaptiveLayout(
+        internalAnimations: false,
+        // Primary navigation config has nothing from 0 to 600 dp screen width,
+        // then an unextended NavigationRail with no labels and just icons then an
+        // extended NavigationRail with both icons and labels.
+        primaryNavigation: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig>{
+            // On medium screen we will use a navigation rail
+            Breakpoints.medium: SlotLayout.from(
+              key: const Key('Primary Navigation Medium'),
+              builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                padding: EdgeInsets.zero,
+                selectedIndex: widget.navigationShell.currentIndex,
+                onDestinationSelected: vmContract.onSelectedIndexChange,
+                destinations: _destinations
+                    .map((item) => _toRailDestination(item))
+                    .toList(),
+              ),
             ),
-          ),
-          // On large screens we will use a drawer (extended version of the rail)
-          Breakpoints.large: SlotLayout.from(
-            key: const Key('Primary Navigation Large'),
-            builder: (_) => AdaptiveScaffold.standardNavigationRail(
-              padding: EdgeInsets.zero,
-              selectedIndex: widget.navigationShell.currentIndex,
-              onDestinationSelected: vmContract.onSelectedIndexChange,
-              extended: true,
-              destinations: _destinations
-                  .map((item) => _toRailDestination(item))
-                  .toList(),
+            // On large screens we will use a drawer (extended version of the rail)
+            Breakpoints.large: SlotLayout.from(
+              key: const Key('Primary Navigation Large'),
+              builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                padding: EdgeInsets.zero,
+                selectedIndex: widget.navigationShell.currentIndex,
+                onDestinationSelected: vmContract.onSelectedIndexChange,
+                extended: true,
+                destinations: _destinations
+                    .map((item) => _toRailDestination(item))
+                    .toList(),
+              ),
             ),
-          ),
-        },
-      ),
-      // BottomNavigation is only active in small views defined as under 600 dp
-      bottomNavigation: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig>{
-          Breakpoints.small: SlotLayout.from(
-            key: const Key('Bottom Navigation Small'),
-            builder: (_) => BottomNavigationBar(
-              items: _destinations,
-              currentIndex: widget.navigationShell.currentIndex,
-              onTap: vmContract.onSelectedIndexChange,
+          },
+        ),
+        // BottomNavigation is only active in small views defined as under 600 dp
+        bottomNavigation: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig>{
+            Breakpoints.small: SlotLayout.from(
+              key: const Key('Bottom Navigation Small'),
+              builder: (_) => BottomNavigationBar(
+                items: _destinations,
+                currentIndex: widget.navigationShell.currentIndex,
+                onTap: vmContract.onSelectedIndexChange,
+              ),
+            )
+          },
+        ),
+        // Body will just contain the nested navigator for all screen sizes.
+        // Each nested view could eventually use adaptiveLayout again if needed
+        // Hence we won't use a secondary body in our home_view
+        body: SlotLayout(
+          config: <Breakpoint, SlotLayoutConfig>{
+            Breakpoints.smallAndUp: SlotLayout.from(
+              key: const Key('Nested navigator'),
+              builder: (_) => widget.navigationShell,
             ),
-          )
-        },
-      ),
-      // Body will just contain the nested navigator for all screen sizes.
-      // Each nested view could eventually use adaptiveLayout again if needed
-      // Hence we won't use a secondary body in our home_view
-      body: SlotLayout(
-        config: <Breakpoint, SlotLayoutConfig>{
-          Breakpoints.smallAndUp: SlotLayout.from(
-            key: const Key('Nested navigator'),
-            builder: (_) => widget.navigationShell,
-          ),
-        },
+          },
+        ),
       ),
     );
   }
 
   @override
-  void goToTab(int index) => widget.navigationShell.goBranch(index);
+  void goToTab(int index) {
+    widget.navigationShell.goBranch(index);
+  }
 }
