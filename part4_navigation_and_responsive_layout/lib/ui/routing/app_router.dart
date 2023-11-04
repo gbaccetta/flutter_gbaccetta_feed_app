@@ -9,23 +9,33 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class AppRouter {
-  //static const ValueKey<String> _homeRouter = ValueKey<String>('Home router');
 
   static final GoRouter simpleRouter = GoRouter(
     routes: <RouteBase>[
+      // home will redirect to the articlesView route where the main content is
       GoRoute(
         name: RoutesNames.home,
         path: '/',
         redirect: (_, __) => Routes.articles(),
       ),
+      // at the top level of our router, we will use a StatefulShellRoute
+      // an indexed stack will just use an index starting at 0 for the sub branch
       StatefulShellRoute.indexedStack(
+        // we will use a fade transition page to better fit all platform navigation
+        // pattern. On the web for instance, the default material transition is
+        // not ideal compared to the usual standard navigation pattern
         pageBuilder: (context, state, navigationShell) => FadeTransitionPage(
           key: state.pageKey,
           child: HomeView(navigationShell: navigationShell),
         ),
+        // The difference between a ShellRoute and a StatefulShellRoute is that
+        // the StatefulShellRoute contains a list of branches with its separate
+        // navigation stack instead of a list of routes.
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
+            // our articles tab will correspond to branch with index 0
             routes: <GoRoute>[
+              // it will contains a first route for the article list
               GoRoute(
                 name: RoutesNames.articles,
                 path: '/${PathSegments.articles}',
@@ -37,6 +47,7 @@ class AppRouter {
                   );
                 },
                 routes: <GoRoute>[
+                  // the article details will be a child of a the article list
                   GoRoute(
                     name: RoutesNames.articleDetails,
                     path: ':${PathParams.articleId}',
@@ -65,6 +76,8 @@ class AppRouter {
               ),
             ],
           ),
+          //The user page will correspond to branch with index 1
+          // but in our example app it will only contain a dummy page
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(

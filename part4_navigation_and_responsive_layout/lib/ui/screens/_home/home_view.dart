@@ -4,7 +4,7 @@ import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_contract.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeView extends StatefulWidget {  
+class HomeView extends StatefulWidget {
   /// The navigation shell and container for the branch Navigators.
   final StatefulNavigationShell navigationShell;
 
@@ -17,7 +17,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState
     extends BaseViewWidgetState<HomeView, HomeVMContract, HomeVMState>
     implements HomeViewContract {
-  final destinations = const <BottomNavigationBarItem>[
+  /// this is the list of our tabs
+  final _destinations = const <BottomNavigationBarItem>[
     BottomNavigationBarItem(
       icon: Icon(Icons.article_outlined),
       activeIcon: Icon(Icons.article),
@@ -29,6 +30,14 @@ class _HomeViewState
       label: 'User',
     ),
   ];
+
+  /// This is a simple helper method to convert NavBar items to NavRail items
+  NavigationRailDestination _toRailDestination(BottomNavigationBarItem item) =>
+      NavigationRailDestination(
+        label: Text(item.label!),
+        icon: item.icon,
+        selectedIcon: item.activeIcon,
+      );
 
   @override
   void onInitState() {}
@@ -42,17 +51,19 @@ class _HomeViewState
       // extended NavigationRail with both icons and labels.
       primaryNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
+          // On medium screen we will use a navigation rail
           Breakpoints.medium: SlotLayout.from(
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
               padding: EdgeInsets.zero,
               selectedIndex: widget.navigationShell.currentIndex,
               onDestinationSelected: vmContract.onSelectedIndexChange,
-              destinations: destinations
+              destinations: _destinations
                   .map((item) => _toRailDestination(item))
                   .toList(),
             ),
           ),
+          // On large screens we will use a drawer (extended version of the rail)
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
@@ -60,7 +71,7 @@ class _HomeViewState
               selectedIndex: widget.navigationShell.currentIndex,
               onDestinationSelected: vmContract.onSelectedIndexChange,
               extended: true,
-              destinations: destinations
+              destinations: _destinations
                   .map((item) => _toRailDestination(item))
                   .toList(),
             ),
@@ -68,21 +79,21 @@ class _HomeViewState
         },
       ),
       // BottomNavigation is only active in small views defined as under 600 dp
-      // width.
       bottomNavigation: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.small: SlotLayout.from(
             key: const Key('Bottom Navigation Small'),
             builder: (_) => BottomNavigationBar(
-              items: destinations,
+              items: _destinations,
               currentIndex: widget.navigationShell.currentIndex,
               onTap: vmContract.onSelectedIndexChange,
             ),
           )
         },
       ),
-      // Body switches between a ListView and a GridView from small to medium
-      // breakpoints and onwards.
+      // Body will just contain the nested navigator for all screen sizes.
+      // Each nested view could eventually use adaptiveLayout again if needed
+      // Hence we won't use a secondary body in our home_view
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.smallAndUp: SlotLayout.from(
@@ -96,15 +107,4 @@ class _HomeViewState
 
   @override
   void goToTab(int index) => widget.navigationShell.goBranch(index);
-
-
-  NavigationRailDestination _toRailDestination(
-    BottomNavigationBarItem item,
-  ) {
-    return NavigationRailDestination(
-      label: Text(item.label!),
-      icon: item.icon,
-      selectedIcon: item.activeIcon,
-    );
-  }
 }

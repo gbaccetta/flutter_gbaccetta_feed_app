@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
