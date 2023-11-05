@@ -33,22 +33,22 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
   bool get _isPremiumStory => vmState.article.content.isEmpty;
   String get _improvedDescription => maxWidth > maxHeight
       ? vmState.article.description
-          .replaceAll(RegExp('(width=".*?")'), 'height="$maxHeight"')
+          .replaceAll(RegExp('(width=".*?")'), 'height="${maxHeight * 0.95}"')
       : vmState.article.description
-          .replaceAll(RegExp('(width=".*?")'), 'width="$maxWidth"');
+          .replaceAll(RegExp('(width=".*?")'), 'width="${maxWidth * 0.95}"');
   String get _improvedContent => maxWidth > maxHeight
       ? vmState.article.content
-          .replaceAll('<img alt=', '<img height="$maxHeight" alt=')
+          .replaceAll('<img alt=', '<img height="${maxHeight * 0.6}" alt=')
       : vmState.article.content
-          .replaceAll('<img alt=', '<img width="$maxWidth" alt=');
+          .replaceAll('<img alt=', '<img width="${maxWidth * 0.6}" alt=');
   String get _bodyHtml =>
       !_isPremiumStory ? _improvedContent : _improvedDescription;
 
   @override
   Widget contentBuilder(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      maxHeight = constraints.maxHeight * 0.60;
-      maxWidth = constraints.maxWidth * 0.60;
+      maxHeight = constraints.maxHeight;
+      maxWidth = constraints.maxWidth;
       return Scaffold(
         appBar: AppBar(
           title: Text(
