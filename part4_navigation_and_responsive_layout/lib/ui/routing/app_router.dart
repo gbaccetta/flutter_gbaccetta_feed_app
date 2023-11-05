@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class AppRouter {
-
   static final GoRouter simpleRouter = GoRouter(
     routes: <RouteBase>[
       // home will redirect to the articlesView route where the main content is
@@ -53,7 +52,7 @@ class AppRouter {
                     path: ':${PathParams.articleId}',
                     builder: (BuildContext context, GoRouterState state) {
                       final articleList =
-                          context.read<ArticleList>().articleList;
+                          context.read<ArticleListProvider>().articleList;
                       final String id =
                           state.pathParameters[PathParams.articleId]!;
                       final article = articleList.firstWhere((e) => e.id == id);
@@ -61,7 +60,7 @@ class AppRouter {
                     },
                     redirect: (BuildContext context, GoRouterState state) {
                       final articleList =
-                          context.read<ArticleList>().articleList;
+                          context.read<ArticleListProvider>().articleList;
                       final String id =
                           state.pathParameters[PathParams.articleId]!;
                       if (articleList.any((e) => e.id == id)) return null;

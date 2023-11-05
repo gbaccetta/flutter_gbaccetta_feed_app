@@ -16,6 +16,7 @@ void initializeScreens() {
   getIt.registerFactory<HomeVMState>(
     () => HomeVMState(),
   );
+  
   // ArticleListView
   getIt.registerFactory<ArticleListVMContract>(
     () => ArticleListViewModel(articleInteractor: getIt<ArticleUseCases>()),

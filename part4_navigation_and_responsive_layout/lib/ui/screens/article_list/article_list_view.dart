@@ -30,7 +30,7 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
       !vmState.articleVisibilityList.contains(true);
   @override
   void onInitState() {
-    vmState.articleListProvider = context.read<ArticleList>();
+    vmState.articleListProvider = context.read<ArticleListProvider>();
     vmState.initialArticleId = widget.initialArticleId;
   }
 
@@ -81,7 +81,7 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     return ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxCardWidth),
         child: AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           child: vmState.articleVisibilityList[index]
               ? _article(index)
               : TweenAnimationBuilder<double>(

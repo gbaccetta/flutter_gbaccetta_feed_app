@@ -19,7 +19,7 @@ class GBAccettaApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => User(id: 'id', name: 'name')),
-        ChangeNotifierProvider(create: (_) => ArticleList())
+        ChangeNotifierProvider(create: (_) => ArticleListProvider())
       ],
       child: MaterialApp.router(
         title: 'GBAccetta Portfolio',

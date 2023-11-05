@@ -3,7 +3,7 @@ import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_contract.dart';
 
 class ArticleListVMState extends BaseViewModelState {
-  late final ArticleList articleListProvider;
+  late final ArticleListProvider articleListProvider;
   late final String? initialArticleId;
   final List<bool> articleVisibilityList = [];
   List<Article> get articleList => articleListProvider.articleList;
