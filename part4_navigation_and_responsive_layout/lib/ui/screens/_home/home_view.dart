@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/routing/nested_navigator.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_contract.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeView extends StatefulWidget {
   /// The navigation shell and container for the branch Navigators.
-  final StatefulNavigationShell navigationShell;
+  final NestedNavigator nestedNavigator;
 
-  const HomeView({super.key, required this.navigationShell});
+  const HomeView({super.key, required this.nestedNavigator});
 
   @override
   State<StatefulWidget> createState() => _HomeViewState();
@@ -57,7 +57,7 @@ class _HomeViewState
               key: const Key('Primary Navigation Medium'),
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
                 padding: EdgeInsets.zero,
-                selectedIndex: widget.navigationShell.currentIndex,
+                selectedIndex: widget.nestedNavigator.currentIndex,
                 onDestinationSelected: vmContract.onSelectedIndexChange,
                 destinations: _destinations
                     .map((item) => _toRailDestination(item))
@@ -69,7 +69,7 @@ class _HomeViewState
               key: const Key('Primary Navigation Large'),
               builder: (_) => AdaptiveScaffold.standardNavigationRail(
                 padding: EdgeInsets.zero,
-                selectedIndex: widget.navigationShell.currentIndex,
+                selectedIndex: widget.nestedNavigator.currentIndex,
                 onDestinationSelected: vmContract.onSelectedIndexChange,
                 extended: true,
                 destinations: _destinations
@@ -86,7 +86,7 @@ class _HomeViewState
               key: const Key('Bottom Navigation Small'),
               builder: (_) => BottomNavigationBar(
                 items: _destinations,
-                currentIndex: widget.navigationShell.currentIndex,
+                currentIndex: widget.nestedNavigator.currentIndex,
                 onTap: vmContract.onSelectedIndexChange,
               ),
             )
@@ -99,7 +99,7 @@ class _HomeViewState
           config: <Breakpoint, SlotLayoutConfig>{
             Breakpoints.smallAndUp: SlotLayout.from(
               key: const Key('Nested navigator'),
-              builder: (_) => widget.navigationShell,
+              builder: (_) => widget.nestedNavigator.navigatorContainer,
             ),
           },
         ),
@@ -109,6 +109,6 @@ class _HomeViewState
 
   @override
   void goToTab(int index) {
-    widget.navigationShell.goBranch(index);
+    widget.nestedNavigator.goBranch(index);
   }
 }

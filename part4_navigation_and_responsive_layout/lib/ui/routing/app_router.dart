@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/fade_in_transition_page.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/routing/nested_navigator.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_view.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
@@ -25,7 +26,7 @@ class AppRouter {
         // not ideal compared to the usual standard navigation pattern
         pageBuilder: (context, state, navigationShell) => FadeTransitionPage(
           key: state.pageKey,
-          child: HomeView(navigationShell: navigationShell),
+          child: HomeView(nestedNavigator: NestedNavigator(navigationShell)),
         ),
         // The difference between a ShellRoute and a StatefulShellRoute is that
         // the StatefulShellRoute contains a list of branches with its separate
