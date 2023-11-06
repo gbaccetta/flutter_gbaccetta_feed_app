@@ -48,7 +48,7 @@ class _FakeGoRouterPageState extends State<_FakeGoRouterPage> {
       );
 }
 
-/// Finally we need to mock our views. Note that for the Mocked HomeView, 
+/// We need to mock our views. Note that for the Mocked HomeView, 
 /// the constructor mimics the real HomeView to enable
 /// go_router to pass the nested navigator information.
 class _MockHomeView extends _MockView implements HomeView {

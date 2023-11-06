@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -29,7 +30,7 @@ void main() {
     Size size = portrait,
   }) async {
     mockNestedNavigator = MockNestedNavigator();
-    view = HomeView(nestedNavigator: mockNestedNavigator);
+    view = getIt<HomeView>(param1: mockNestedNavigator);
     when(() => mockNestedNavigator.currentIndex).thenReturn(initialTab);
     when(() => mockNestedNavigator.navigatorContainer).thenReturn(Container());
     await tester
