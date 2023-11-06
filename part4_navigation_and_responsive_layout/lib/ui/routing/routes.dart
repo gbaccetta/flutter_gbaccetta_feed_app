@@ -17,5 +17,5 @@ class RoutesNames {
 class Routes {
   static articles() => '/${PathSegments.articles}';
   static user() => '/${PathSegments.user}';
-  static article(String id) => '/${PathSegments.articles}/:$id';
+  static article(String id) => '/${PathSegments.articles}/$id';
 }

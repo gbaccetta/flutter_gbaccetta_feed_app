@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/fade_in_transition_page.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/nested_navigator.dart';
@@ -26,7 +27,7 @@ class AppRouter {
         // not ideal compared to the usual standard navigation pattern
         pageBuilder: (context, state, navigationShell) => FadeTransitionPage(
           key: state.pageKey,
-          child: HomeView(nestedNavigator: NestedNavigator(navigationShell)),
+          child: getIt<HomeView>(param1: NestedNavigator(navigationShell)),
         ),
         // The difference between a ShellRoute and a StatefulShellRoute is that
         // the StatefulShellRoute contains a list of branches with its separate
@@ -43,7 +44,7 @@ class AppRouter {
                   final id = state.uri.queryParameters['query']; // may be null
                   return FadeTransitionPage(
                     key: state.pageKey,
-                    child: ArticleListView(initialArticleId: id),
+                    child: getIt<ArticleListView>(param1: id),
                   );
                 },
                 routes: <GoRoute>[
@@ -57,7 +58,7 @@ class AppRouter {
                       final String id =
                           state.pathParameters[PathParams.articleId]!;
                       final article = articleList.firstWhere((e) => e.id == id);
-                      return ArticleDetailsView(article: article);
+                      return getIt<ArticleDetailsView>(param1: article);
                     },
                     redirect: (BuildContext context, GoRouterState state) {
                       final articleList =
