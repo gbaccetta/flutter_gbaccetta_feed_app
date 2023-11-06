@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -24,14 +25,15 @@ void main() {
   final description = find.text('description');
 
   Future<void> init(WidgetTester tester, {Article? article}) async {
-    view = ArticleDetailsView(article: article ?? anyArticle);
+    view = getIt<ArticleDetailsView>(param1: article ?? anyArticle);
     await tester.pumpWidget(makeTestableWidget(child: view));
+    await tester.pumpAndSettle();
   }
 
   group('init -', () {
-    testWidgets('with anyArticle', (tester) async {
+    testWidgets('with anyArticle in portrait', (tester) async {
+      await tester.binding.setSurfaceSize(portrait);
       await init(tester);
-      await tester.pump();
 
       expect(content, findsOneWidget);
       expect(fab, findsOneWidget);
@@ -40,9 +42,35 @@ void main() {
       expect(description, findsNothing);
     });
 
-    testWidgets('with premiumArticle', (tester) async {
+    // this is added mainly for coverage since we modify img tag differently in
+    // landscape than in portrait
+    testWidgets('with anyArticle in landscape', (tester) async {
+      await tester.binding.setSurfaceSize(landscape);
+      await init(tester);
+
+      expect(content, findsOneWidget);
+      expect(fab, findsOneWidget);
+      expect(loader, findsNothing);
+      expect(link, findsOneWidget);
+      expect(description, findsNothing);
+    });
+
+    testWidgets('with premiumArticle portrait', (tester) async {
+      await tester.binding.setSurfaceSize(portrait);
       await init(tester, article: anyPremiumArticle);
-      await tester.pump();
+
+      expect(content, findsOneWidget);
+      expect(fab, findsOneWidget);
+      expect(loader, findsNothing);
+      expect(link, findsNothing);
+      expect(description, findsOneWidget);
+    });
+
+    // this is added mainly for coverage since we modify img tag differently in
+    // landscape than in portrait
+    testWidgets('with premiumArticle landscape', (tester) async {
+      await tester.binding.setSurfaceSize(landscape);
+      await init(tester, article: anyPremiumArticle);
 
       expect(content, findsOneWidget);
       expect(fab, findsOneWidget);
@@ -54,7 +82,6 @@ void main() {
 
   testWidgets('tap On Fab should show loader for 1 second', (tester) async {
     await init(tester);
-    await tester.pump();
     await tester.tap(fab);
     await tester.pump();
 
@@ -65,7 +92,6 @@ void main() {
 
   testWidgets('tap On link should launch url in browser', (tester) async {
     await init(tester);
-    await tester.pump();
     await tester.tap(link);
     await tester.pumpAndSettle();
     // this test does not have any expect or verify method on purpose. In fact

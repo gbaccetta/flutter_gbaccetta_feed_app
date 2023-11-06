@@ -1,4 +1,5 @@
 import 'package:flutter_gbaccetta_feed_app/domain/failures/api_error.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_contract.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,65 +27,128 @@ void main() {
     viewModel = ArticleListViewModel(articleInteractor: mockArticleInteractor);
     viewModel.viewContract = mockView;
     viewModel.vmState = vmState;
+
+    /// we initialize the provider as normally done by the view when binding.
+    viewModel.vmState.articleListProvider = ArticleListProvider();
   });
 
   group('onInitState -', () {
-    test('successfully get articles and set visibility to true', () async {
-      // set initial state and define mock behavior
-      when(() => mockArticleInteractor.getArticles()).thenAnswer(
-        (_) => Future.value([anyArticle]),
-      );
+    group('no initial list -', () {
+      group('successfully get articles -', () {
+        test('populate list and set visibility to true', () async {
+          vmState.initialArticleId = null;
+          // set initial state and define mock behavior
+          when(() => mockArticleInteractor.getArticles()).thenAnswer(
+            (_) => Future.value([anyArticle]),
+          );
 
-      // invoke method
-      viewModel.onInitState();
+          // invoke method
+          viewModel.onInitState();
 
-      // check result
-      expect(vmState.isLoading, isTrue);
-      verify(() => mockArticleInteractor.getArticles());
+          // check result
+          expect(vmState.isLoading, isTrue);
+          verify(() => mockArticleInteractor.getArticles());
 
-      // check async result
-      await Future.delayed(milliseconds10);
-      expect(vmState.isLoading, isFalse);
-      expect(vmState.hasError, isFalse);
-      expect(vmState.articleList.length, 1);
-      expect(vmState.articleList.first, anyArticle);
-      expect(vmState.articleVisibilityList.length, 1);
-      expect(vmState.articleVisibilityList.first, isTrue);
+          // check async result
+          await Future.delayed(milliseconds10);
+          expect(vmState.isLoading, isFalse);
+          expect(vmState.hasError, isFalse);
+          expect(vmState.articleList.length, 1);
+          expect(vmState.articleList.first, anyArticle);
+          expect(vmState.articleVisibilityList.length, 1);
+          expect(vmState.articleVisibilityList.first, isTrue);
+        });
+        test('navigate to initial requested article if found', () async {
+          vmState.initialArticleId = anyPremiumArticle.id;
+          // set initial state and define mock behavior
+          when(() => mockArticleInteractor.getArticles()).thenAnswer(
+            (_) => Future.value([anyArticle, anyPremiumArticle]),
+          );
+
+          // invoke method
+          await viewModel.onInitState();
+
+          // check result
+          verifyNever(() => mockView.goToArticleDetailsScreen(0));
+          verify(() => mockView.goToArticleDetailsScreen(1));
+        });
+      });
+      test('fail with ApiError', () async {
+        // set initial state and define mock behavior
+        when(() => mockArticleInteractor.getArticles()).thenAnswer(
+          (_) => Future.error([ApiError(message: 'error')]),
+        );
+
+        // invoke method
+        viewModel.onInitState();
+
+        // check result
+        expect(vmState.isLoading, isTrue);
+        verify(() => mockArticleInteractor.getArticles());
+
+        // check async result
+        await Future.delayed(milliseconds10);
+        expect(vmState.isLoading, isFalse);
+        expect(vmState.hasError, isTrue);
+        expect(vmState.articleList.length, 0);
+        expect(vmState.articleVisibilityList.length, 0);
+      });
+
+      test('fail with another exception', () {
+        // set initial state and define mock behavior
+        when(() => mockArticleInteractor.getArticles()).thenThrow(Exception());
+
+        // invoke method
+        viewModel.onInitState();
+
+        // check result
+        verify(() => mockArticleInteractor.getArticles());
+        expect(vmState.isLoading, isFalse);
+        expect(vmState.hasError, isTrue);
+        expect(vmState.articleList.length, 0);
+        expect(vmState.articleVisibilityList.length, 0);
+      });
     });
-    test('fail with ApiError', () async {
-      // set initial state and define mock behavior
-      when(() => mockArticleInteractor.getArticles()).thenAnswer(
-        (_) => Future.error([ApiError(message: 'error')]),
-      );
 
-      // invoke method
-      viewModel.onInitState();
+    group('with initial list should not fetch again the list -', () {
+      test('load and set visibility to true', () async {
+        vmState.articleList.addAll([anyArticle]);
+        vmState.initialArticleId = null;
 
-      // check result
-      expect(vmState.isLoading, isTrue);
-      verify(() => mockArticleInteractor.getArticles());
+        // invoke method
+        await viewModel.onInitState();
 
-      // check async result
-      await Future.delayed(milliseconds10);
-      expect(vmState.isLoading, isFalse);
-      expect(vmState.hasError, isTrue);
-      expect(vmState.articleList.length, 0);
-      expect(vmState.articleVisibilityList.length, 0);
-    });
+        // check result
+        verifyNever(() => mockArticleInteractor.getArticles());
+        expect(vmState.isLoading, isFalse);
+        expect(vmState.hasError, isFalse);
+        expect(vmState.articleList.length, 1);
+        expect(vmState.articleList.first, anyArticle);
+        expect(vmState.articleVisibilityList.length, 1);
+        expect(vmState.articleVisibilityList.first, isTrue);
+      });
+      test('load and navigate to initial article if present', () async {
+        vmState.articleList.addAll([anyArticle]);
+        vmState.initialArticleId = anyArticle.id;
 
-    test('fail with another exception', () {
-      // set initial state and define mock behavior
-      when(() => mockArticleInteractor.getArticles()).thenThrow(Exception());
+        // invoke method
+        await viewModel.onInitState();
 
-      // invoke method
-      viewModel.onInitState();
+        // check result
+        verifyNever(() => mockArticleInteractor.getArticles());
+        verify(() => mockView.goToArticleDetailsScreen(0));
+      });
+      test('load and do not navigate to initial article if absent', () async {
+        vmState.articleList.addAll([anyArticle]);
+        vmState.initialArticleId = anyPremiumArticle.id;
 
-      // check result
-      verify(() => mockArticleInteractor.getArticles());
-      expect(vmState.isLoading, isFalse);
-      expect(vmState.hasError, isTrue);
-      expect(vmState.articleList.length, 0);
-      expect(vmState.articleVisibilityList.length, 0);
+        // invoke method
+        await viewModel.onInitState();
+
+        // check result
+        verifyNever(() => mockArticleInteractor.getArticles());
+        verifyNever(() => mockView.goToArticleDetailsScreen(0));
+      });
     });
   });
 

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/data/modules/api/endpoints.dart';
-import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/widgets/generic_widgets/screen_error_widget.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/widgets/model_widgets/article_card.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:provider/provider.dart';
+
 import '../../../_mocks/mocked_components/mock_client_adapter.dart';
+import '../../../_mocks/mocked_components/mock_go_router.dart';
 import '../../../_mocks/mocked_data/endpoint/medium_rss_feed_mocked.dart';
 import '../../../utils/test_utils.dart';
 
@@ -17,14 +24,13 @@ void main() {
   /// the architecture: the modules (whose we will be obviously mocking)
   late ArticleListView view;
   late MockClientAdapter mockClientAdapter;
+  late MockGoRouter mockGoRouter;
 
   setUpAll(() {
     serviceLocatorForTestInitialization();
   });
 
   /// we define the finder we will be using to test our views
-  final articleListView = find.byType(ArticleListView);
-  final articleDetailsView = find.byType(ArticleDetailsView);
   final fab = find.byType(FloatingActionButton);
   final articleCard = find.byType(ArticleCard);
   final hideIconButton = find.byType(IconButton);
@@ -33,14 +39,21 @@ void main() {
   final coverPlaceholder = find.byType(CoverPlaceholder);
   final emptyListMessage = find.text('WOW!\n🚨\nNo articles in the list');
   final errorSnackBar = find.text('Ouch 🚨! There was an error... 🤦‍♂️');
+  const articleId = 'https://medium.com/p/e1131f7c0355';
 
   Future<void> init(
     WidgetTester tester, {
+    String? initialArticleId,
+    List<Article>? initialArticleList,
     int? apiMediumRssFeedCode,
     String? apiMediumRssFeedData,
   }) async {
-    view = const ArticleListView();
+    view = getIt<ArticleListView>(param1: initialArticleId);
     mockClientAdapter = getIt<MockClientAdapter>();
+
+    /// since mockGoRouter does not required any injected dependency, we
+    /// do not need to use getIt as for the ClientAdapter requiring ApiService
+    mockGoRouter = MockGoRouter();
 
     mockClientAdapter
         .onApiCall(ApiMethod.get, Endpoints.mediumRssFeed)
@@ -50,7 +63,19 @@ void main() {
               apiMediumRssFeedData ?? MediumRssFeedMocked.string200OneArticle,
         );
 
-    await tester.pumpWidget(makeTestableWidget(child: view));
+    await tester.pumpWidget(
+      makeTestableWidget(
+        child: view,
+        mockGoRouter: mockGoRouter,
+        testProviders: [
+          ChangeNotifierProvider<User>(
+              create: (_) => User(id: 'id', name: 'name')),
+          ChangeNotifierProvider<ArticleListProvider>(
+              create: (_) =>
+                  ArticleListProvider(articleList: initialArticleList)),
+        ],
+      ),
+    );
   }
 
   group('init -', () {
@@ -122,14 +147,90 @@ void main() {
     });
   });
 
-  testWidgets('tap On Article should open ArticleDetailsView', (tester) async {
-    await init(tester);
-    await tester.pumpAndSettle();
-    await tester.tap(articleCard);
-    await tester.pumpAndSettle();
+  group('navigation -', () {
+    testWidgets('tap On Article should open ArticleDetailsView',
+        (tester) async {
+      await init(tester);
+      await tester.pumpAndSettle();
+      await tester.tap(articleCard);
+      await tester.pumpAndSettle();
 
-    expect(articleDetailsView, findsOneWidget);
-    expect(articleListView, findsNothing);
+      verify(
+        () => mockGoRouter.goNamed(
+          RoutesNames.articleDetails,
+          pathParameters: {PathParams.articleId: articleId},
+        ),
+      );
+    });
+
+    group('deep link with initialArticleId -', () {
+      group('articles already fetched -', () {
+        testWidgets('navigate if in articleList', (tester) async {
+          await init(
+            tester,
+            initialArticleId: anyArticle.id,
+            initialArticleList: [anyArticle],
+          );
+          await tester.pumpAndSettle();
+
+          verify(
+            () => mockGoRouter.goNamed(
+              RoutesNames.articleDetails,
+              pathParameters: {PathParams.articleId: anyArticle.id},
+            ),
+          );
+        });
+
+        testWidgets('do not navigate if not in articleList', (tester) async {
+          await init(
+            tester,
+            initialArticleId: 'anyOtherId',
+            initialArticleList: [anyArticle],
+          );
+          await tester.pumpAndSettle();
+
+          verifyNever(
+            () => mockGoRouter.goNamed(
+              RoutesNames.articleDetails,
+              pathParameters: {PathParams.articleId: articleId},
+            ),
+          );
+        });
+      });
+      group('articles fetched on opening -', () {
+        testWidgets('navigate to it if in the api result', (tester) async {
+          await init(
+            tester,
+            initialArticleId: articleId,
+            initialArticleList: [],
+          );
+          await tester.pumpAndSettle();
+
+          verify(
+            () => mockGoRouter.goNamed(
+              RoutesNames.articleDetails,
+              pathParameters: {PathParams.articleId: articleId},
+            ),
+          );
+        });
+
+        testWidgets('do not navigate if not in the api result', (tester) async {
+          await init(
+            tester,
+            initialArticleId: 'anyOtherId',
+            initialArticleList: [],
+          );
+          await tester.pumpAndSettle();
+
+          verifyNever(
+            () => mockGoRouter.goNamed(
+              RoutesNames.articleDetails,
+              pathParameters: {PathParams.articleId: articleId},
+            ),
+          );
+        });
+      });
+    });
   });
 
   testWidgets('tap On Hide Article should leave an empty list', (tester) async {
