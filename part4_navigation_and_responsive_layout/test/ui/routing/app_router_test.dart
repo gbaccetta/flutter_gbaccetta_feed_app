@@ -85,7 +85,7 @@ void main() {
 
   testWidgets('navigate to user view and back', (tester) async {
     await init(tester);
-    final BuildContext context = tester.element(find.byType(_FakeView));
+    final BuildContext context = tester.element(homeView);
     context.go(Routes.user());
     await tester.pumpAndSettle();
 
@@ -102,7 +102,7 @@ void main() {
       'navigate to article details should redirect to articleList if articleListProvider is empty',
       (tester) async {
     await init(tester);
-    final BuildContext context = tester.element(find.byType(_FakeView));
+    final BuildContext context = tester.element(homeView);
     context.go(Routes.article(anyArticle.id));
     await tester.pumpAndSettle();
     expect(articleListView, findsOneWidget);
@@ -120,7 +120,7 @@ void main() {
     ];
 
     await init(tester, testProviders: testProviders);
-    final BuildContext context = tester.element(find.byType(_FakeView));
+    final BuildContext context = tester.element(homeView);
     context.go(Routes.article(anyArticle.id));
     await tester.pumpAndSettle();
     expect(articleDetailsView, findsOneWidget);
