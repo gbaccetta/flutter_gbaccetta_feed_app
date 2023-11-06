@@ -77,7 +77,7 @@ class AppRouter {
               ),
             ],
           ),
-          //The user page will correspond to branch with index 1
+          // The user page will correspond to branch with index 1
           // but in our example app it will only contain a dummy page
           StatefulShellBranch(
             routes: <GoRoute>[

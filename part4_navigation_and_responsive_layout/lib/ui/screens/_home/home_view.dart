@@ -5,7 +5,10 @@ import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_contract.dart';
 
 class HomeView extends StatefulWidget {
-  /// The navigation shell and container for the branch Navigators.
+  /// This parameter is passed by go_router and could have directly been a 
+  /// StatefulNavigationShell. However when mocking the view it is hard to mock
+  /// all the complexity of this widget. Hence we created a wrapper NestedNavigator
+  /// class to make it much easier to mock using mocktail
   final NestedNavigator nestedNavigator;
 
   const HomeView({super.key, required this.nestedNavigator});

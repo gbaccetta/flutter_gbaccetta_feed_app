@@ -6,10 +6,6 @@ import '../../../_mocks/mocked_components/generic_mocks.dart';
 import '../../../utils/test_utils.dart';
 
 void main() {
-  /// we start by defining the components that we will need to test and/or mock
-  /// in functional test we should test end to end scenarios. Hence we need
-  /// the entry point, the view itself and the what is on the other end of
-  /// the architecture: the modules (whose we will be obviously mocking)
   late HomeView view;
   late MockNestedNavigator mockNestedNavigator;
 
@@ -17,7 +13,6 @@ void main() {
     serviceLocatorForTestInitialization();
   });
 
-  /// we define the finder we will be using to test our views
   final bottomNavigationBar = find.byType(BottomNavigationBar);
   final navigationRail = find.byWidgetPredicate(
       (widget) => widget is NavigationRail && widget.extended == false);
