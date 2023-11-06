@@ -15,27 +15,25 @@ import 'package:provider/provider.dart';
 
 import '../../utils/test_utils.dart';
 
-/// We want to be able to test navigation in the app without caring about the
-/// actual logic in each page. This will allow to tests all the url based
-/// navigation as well as deeplink and redirection without having to mock all
-/// the dependencies required by each page
+/// This abstract class represents a mocked view intended for testing navigation
+/// in the app without concerning the actual logic in each page. This allows
+/// testing URL-based navigation, deeplinks, and redirection without the need to
+/// mock all the dependencies required by each page.
 abstract class _MockView<T extends StatefulWidget> extends Mock {
   final NestedNavigator? nestedNavigator;
   _MockView({this.nestedNavigator});
   @override
   String toString({DiagnosticLevel? minLevel}) => super.toString();
 
-  /// this method is what create the actual widget, hence we override it in our
-  /// mocked class to actually provide a fakeGoRouterPage that may contains a
-  /// nestedNavigator (such as the StatefulShellRoute that is our HomeView)
-  StatefulElement createElement() => StatefulElement(_FakeGoRouterPage(
+  /// This method creates the actual widget. It's overridden in the mocked class
+  /// to provide a fakeGoRouterPage, potentially containing a nestedNavigator.
+    StatefulElement createElement() => StatefulElement(_FakeGoRouterPage(
         key: Key(runtimeType.toString()),
         nestedNavigator: nestedNavigator,
       ));
 }
 
-/// This class is our actual Fake View containing only SizedBox or the nested
-/// navigatorContainer
+/// Represents the Fake View containing only SizedBox or the nested navigator container.
 class _FakeGoRouterPage extends StatefulWidget {
   final NestedNavigator? nestedNavigator;
   const _FakeGoRouterPage({super.key, this.nestedNavigator});
@@ -50,9 +48,9 @@ class _FakeGoRouterPageState extends State<_FakeGoRouterPage> {
       );
 }
 
-/// Finally we need to mock our views. Note that we need to have the constructor
-/// of the MockHomeView mimic the real HomeView to let go_router actually pass
-/// the nested navigator informations.
+/// Finally we need to mock our views. Note that for the Mocked HomeView, 
+/// the constructor mimics the real HomeView to enable
+/// go_router to pass the nested navigator information.
 class _MockHomeView extends _MockView implements HomeView {
   _MockHomeView({super.nestedNavigator});
   @override
@@ -73,7 +71,6 @@ void main() {
     getIt.registerFactory<ArticleDetailsView>(() => _MockArticleDetailsView());
   });
 
-  //final homeView = find.byType(HomeView);
   final homeView = find.byKey(const Key('_MockHomeView'));
   final articleListView = find.byKey(const Key('_MockArticleListView'));
   final articleDetailsView = find.byKey(const Key('_MockArticleDetailsView'));
