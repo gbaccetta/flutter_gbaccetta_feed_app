@@ -27,6 +27,8 @@ abstract class _MockView<T extends StatefulWidget> extends Mock {
 
   /// This method creates the actual widget. It's overridden in the mocked class
   /// to provide a fakeGoRouterPage, potentially containing a nestedNavigator.
+  /// Here I user a trick including a key based on the mocked class name to easily
+  /// test if the actual route has been correctly built by GoRouter
     StatefulElement createElement() => StatefulElement(_FakeGoRouterPage(
         key: Key(runtimeType.toString()),
         nestedNavigator: nestedNavigator,
