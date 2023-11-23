@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/app_router.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/nested_navigator.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
-import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_view.dart';
-import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
-import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/screens/views.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
@@ -65,18 +63,22 @@ class _MockArticleListView extends _MockView<ArticleListView>
 class _MockArticleDetailsView extends _MockView<ArticleDetailsView>
     implements ArticleDetailsView {}
 
+class _MockUserSettingsView extends _MockView<UserSettingsView>
+    implements UserSettingsView {}
+
 void main() {
   setUpAll(() {
     getIt.registerFactoryParam<HomeView, NestedNavigator, void>(
         (nestedNav, _) => _MockHomeView(nestedNavigator: nestedNav));
     getIt.registerFactory<ArticleListView>(() => _MockArticleListView());
     getIt.registerFactory<ArticleDetailsView>(() => _MockArticleDetailsView());
+    getIt.registerFactory<UserSettingsView>(() => _MockUserSettingsView());
   });
 
   final homeView = find.byKey(const Key('_MockHomeView'));
   final articleListView = find.byKey(const Key('_MockArticleListView'));
   final articleDetailsView = find.byKey(const Key('_MockArticleDetailsView'));
-  final userView = find.text('User page');
+  final userView = find.byKey(const Key('_MockUserSettingsView'));
 
   Future<void> init(
     WidgetTester tester, {

@@ -8,7 +8,7 @@ import '../../_mocks/mocked_data/endpoint/medium_rss_feed_mocked.dart';
 import '../../_mocks/mocked_components/generic_mocks.dart';
 
 void main() {
-  ArticleInteractor? articleInteractor;
+  late ArticleInteractor articleInteractor;
   final mockApiService = MockApiService();
 
   setUp(() {
@@ -25,7 +25,7 @@ void main() {
       ),
     );
 
-    final result = await articleInteractor!.getArticles();
+    final result = await articleInteractor.getArticles();
 
     verify(() => mockApiService.getMediumRssFeed());
     expect(result.length, 1);

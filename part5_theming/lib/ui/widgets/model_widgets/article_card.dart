@@ -27,11 +27,7 @@ class ArticleCard extends StatelessWidget {
             height: 160,
             width: double.infinity,
             child: Card(
-              elevation: 16,
               clipBehavior: Clip.antiAlias,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
               child: article.coverImage == null
                   ? const CoverPlaceholder()
                   : CachedNetworkImage(
@@ -44,15 +40,13 @@ class ArticleCard extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 270,
+            height: 295,
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 95, 20, 8),
+              padding: const EdgeInsets.fromLTRB(20, 105, 20, 8),
               child: Card(
+                elevation: 4,
                 clipBehavior: Clip.antiAlias,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
                 child: Column(
                   children: [
                     Expanded(
@@ -65,31 +59,32 @@ class ArticleCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 40,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
                         children: article.keywords
                             .map((k) => Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Chip(
-                                    label: Text(
-                                      k,
-                                    ),
-                                    backgroundColor: Colors.green.shade100,
-                                  ),
+                                  child: Chip(label: Text(k)),
                                 ))
                             .toList(),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(
-                            onPressed: onHideTap,
-                            icon: const Icon(Icons.remove_red_eye),
+                          SizedBox(
+                            height: 28,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: onHideTap,
+                              iconSize: 24,
+                              icon: const Icon(Icons.remove_red_eye),
+                            ),
                           ),
                           Text(
                             DateFormat('dd MMMM yyyy').format(article.date),
@@ -119,8 +114,12 @@ class CoverPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      color: Colors.green,
-      child: const Icon(Icons.article_rounded, size: 130, color: Colors.white),
+      color: Theme.of(context).colorScheme.primary,
+      child: Icon(
+        Icons.article_rounded,
+        size: 130,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
     );
   }
 }

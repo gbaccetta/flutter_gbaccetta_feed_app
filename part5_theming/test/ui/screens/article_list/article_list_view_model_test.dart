@@ -1,5 +1,5 @@
 import 'package:flutter_gbaccetta_feed_app/domain/failures/api_error.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_contract.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';

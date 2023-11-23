@@ -1,12 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/fade_in_transition_page.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/nested_navigator.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_home/home_view.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_details/article_details_view.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view.dart';
+import 'package:flutter_gbaccetta_feed_app/ui/screens/user_settings/user_settings_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -87,7 +88,7 @@ class AppRouter {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return FadeTransitionPage(
                     key: state.pageKey,
-                    child: const Center(child: Text('User page')),
+                    child: getIt<UserSettingsView>(),
                   );
                 },
               ),

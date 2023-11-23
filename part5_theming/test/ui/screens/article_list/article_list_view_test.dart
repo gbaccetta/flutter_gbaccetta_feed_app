@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/data/modules/api/endpoints.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_view.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/article_list/article_list_contract.dart';
@@ -37,11 +37,9 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
   @override
   Widget contentBuilder(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(
-          'GBAccetta Portfolio',
-          style: textTheme.titleLarge?.copyWith(color: Colors.white),
-        ),
+        title: Text('GBAccetta Portfolio', style: textTheme.titleLarge),
       ),
       body: Stack(
         children: [
@@ -52,6 +50,7 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
                 maxCardWidth =
                     constraints.maxWidth / (constraints.maxWidth ~/ 300);
                 return SingleChildScrollView(
+                  padding: const EdgeInsets.only(top: 75),
                   child: Wrap(
                     children: List.generate(
                       vmState.articleList.length,

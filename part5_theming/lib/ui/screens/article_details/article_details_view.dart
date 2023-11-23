@@ -50,18 +50,16 @@ class _ArticleDetailsViewWidgetState extends BaseViewWidgetState<
       maxHeight = constraints.maxHeight;
       maxWidth = constraints.maxWidth;
       return Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          title: Text(
-            'Content',
-            style: textTheme.titleLarge?.copyWith(color: Colors.white),
-          ),
+          title: Text('Content', style: textTheme.titleLarge),
         ),
         body: SizedBox.expand(
           child: Stack(
             children: [
               Positioned.fill(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.fromLTRB(8, 60, 8, 8),
                   child: Column(
                     children: [
                       Html(

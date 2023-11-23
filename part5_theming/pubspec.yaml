@@ -22,6 +22,7 @@ dependencies:
   http: ^1.1.0
   intl: ^0.17.0
   provider: ^6.0.5
+  shared_preferences: ^2.2.2
   url_launcher: ^6.1.14
   webfeed_plus: ^1.0.0
 

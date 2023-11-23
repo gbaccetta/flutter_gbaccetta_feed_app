@@ -5,10 +5,12 @@ class ScreenLoaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: Colors.white70,
-      child: SizedBox.expand(
-        child: Center(child: CircularProgressIndicator()),
+    return ColoredBox(
+      color: Theme.of(context).colorScheme.surface.withAlpha(125),
+      child: const SizedBox.expand(
+        child: Center(child: CircularProgressIndicator(
+          
+        )),
       ),
     );
   }

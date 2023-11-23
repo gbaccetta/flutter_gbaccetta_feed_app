@@ -1,5 +1,5 @@
 import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_contract.dart';
 
 class ArticleListVMState extends BaseViewModelState {

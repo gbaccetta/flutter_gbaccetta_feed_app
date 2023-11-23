@@ -4,11 +4,13 @@ import 'package:flutter_gbaccetta_feed_app/core/locators/locator.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator_interactors.dart';
 import 'package:flutter_gbaccetta_feed_app/core/locators/locator_screens.dart';
 import 'package:flutter_gbaccetta_feed_app/data/modules/api/api_service.dart';
+import 'package:flutter_gbaccetta_feed_app/data/modules/services/shared_prefs_service.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/article.dart';
-import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list.dart';
+import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/user.dart';
 import 'package:provider/provider.dart';
 
+import '../_mocks/mocked_components/generic_mocks.dart';
 import '../_mocks/mocked_components/mock_client_adapter.dart';
 import '../_mocks/mocked_components/mock_default_cache_manager.dart';
 import '../_mocks/mocked_components/mock_go_router.dart';
@@ -29,6 +31,9 @@ _initializeMockModules() {
   );
   getIt.registerLazySingleton<MockClientAdapter>(
     () => MockClientAdapter(dio: getIt<ApiService>().dio),
+  );
+  getIt.registerLazySingleton<SharedPrefsService>(
+    () => MockSharedPrefsService(),
   );
   // For other modules we will usually use the mocked version
   getIt.registerLazySingleton<BaseCacheManager>(
@@ -65,8 +70,11 @@ Widget makeTestableWidget({
 
 final defaultTestProviders = [
   ChangeNotifierProvider<ArticleListProvider>(
-      create: (_) => ArticleListProvider()),
-  ChangeNotifierProvider<User>(create: (_) => User(id: 'id', name: 'name')),
+    create: (_) => ArticleListProvider(),
+  ),
+  ChangeNotifierProvider<User>(
+    create: (_) => User(id: 'id', name: 'name'),
+  ),
 ];
 
 ///
@@ -74,6 +82,7 @@ final defaultTestProviders = [
 ///
 const landscape = Size(800, 400);
 const portrait = Size(400, 800);
+const thinPortrait = Size(280, 580);
 const mediumScreen = Size(600, 800);
 const largeScreen = Size(1200, 800);
 
