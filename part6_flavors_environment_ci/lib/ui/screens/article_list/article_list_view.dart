@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gbaccetta_feed_app/config/flavor_config.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/providers/article_list_provider.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/routing/routes.dart';
 import 'package:flutter_gbaccetta_feed_app/ui/screens/_base/base_view_widget_state.dart';
@@ -39,7 +40,7 @@ class _ArticleListViewWidgetState extends BaseViewWidgetState<
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('GBAccetta Portfolio', style: textTheme.titleLarge),
+        title: Text(FlavorConfig.appName, style: textTheme.titleLarge),
       ),
       body: Stack(
         children: [

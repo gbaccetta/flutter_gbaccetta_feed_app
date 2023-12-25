@@ -1,3 +1,4 @@
+import 'package:flutter_gbaccetta_feed_app/config/flavor_config.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/app_color.dart';
 import 'package:flutter_gbaccetta_feed_app/domain/models/app_theme_mode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +22,6 @@ class SharedPrefsService {
   void setAppColor(AppColor appColor) =>
       _sharedPref.setInt(_appColorPref, appColor.index);
 
-  AppColor getAppColor() => AppColor
-      .values[_sharedPref.getInt(_appColorPref) ?? AppColor.green.index];
+  AppColor getAppColor() => AppColor.values[
+      _sharedPref.getInt(_appColorPref) ?? FlavorConfig.initialColor.index];
 }

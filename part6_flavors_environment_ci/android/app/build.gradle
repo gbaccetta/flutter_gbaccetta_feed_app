@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace "com.example.part2_data_layer"
+    namespace "com.gbaccetta.app"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -45,7 +45,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.part2_data_layer"
+        applicationId "com.gbaccetta.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -59,6 +59,20 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+        }
+    }
+
+    flavorDimensions "flavor-type"
+    productFlavors {
+        prod {
+            dimension "flavor-type"
+            resValue "string", "app_name", "GBAccetta Feed"
+        }
+        dev {
+            dimension "flavor-type"
+            resValue "string", "app_name", "[DEV] GBAccetta Feed"
+            applicationIdSuffix ".dev"
+            versionNameSuffix ".dev"
         }
     }
 }

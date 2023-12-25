@@ -5,21 +5,104 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "part5_theming",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "part5_theming (profile mode)",
+            "name": "DEV (debug)",
+            "program": "lib/main_dev.dart",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define-from-file",
+                "./lib/config/secrets/dev_secrets.json"
+            ]
         },
         {
-            "name": "part5_theming (release mode)",
+            "name": "DEV (release)",
+            "program": "lib/main_dev.dart",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
-        }
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define-from-file",
+                "./lib/config/secrets/dev_secrets.json"
+            ]
+        },
+        {
+            "name": "DEV NO FLAVOR (debug)",
+            "program": "lib/main_dev.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--dart-define-from-file",
+                "./lib/config/secrets/dev_secrets.json"
+            ]
+        },
+        {
+            "name": "PROD (debug)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define-from-file",
+                "./lib/config/secrets/prod_secrets.json"
+            ]
+        },
+        {
+            "name": "PROD (profile)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define-from-file",
+                "./lib/config/secrets/prod_secrets.json"
+            ]
+        },
+        {
+            "name": "PROD (release)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define-from-file",
+                "./lib/config/secrets/prod_secrets.json"
+            ]
+        },
+        {
+            "name": "DEV (debug)",
+            "program": "lib/main_dev.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define-from-file",
+                "./lib/config/secrets/dev_secrets.json"
+            ]
+        },
+        {
+            "name": "PROD NO FLAVOR (debug)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--dart-define-from-file",
+                "./lib/config/secrets/dev_secrets.json"
+            ]
+        },
     ]
 }

@@ -13,10 +13,10 @@ import 'package:provider/provider.dart';
 
 void main() async {
   FlavorConfig.create(
-    flavor: Flavor.prod,
-    appName: 'GBAccetta Feed',
-    initialColor: AppColor.green,
-    baseUrl: 'https://productionbaseurl.com',
+    flavor: Flavor.dev,
+    appName: '[DEV] GBAccetta Feed',
+    initialColor: AppColor.deepPurple,
+    baseUrl: 'https://devbaseurl.com',
   );
 
   WidgetsFlutterBinding.ensureInitialized();
