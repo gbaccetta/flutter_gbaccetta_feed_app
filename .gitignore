@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+coverage/
 
 # IntelliJ related
 *.iml
@@ -37,6 +38,9 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# Environments secrets
+*_secrets.json
 
 # Android Studio will place build artifacts here
 /android/app/debug
