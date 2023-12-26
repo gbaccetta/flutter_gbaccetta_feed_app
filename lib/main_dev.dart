@@ -12,21 +12,11 @@ import 'package:flutter_gbaccetta_feed_app/ui/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  FlavorConfig.create(
-    flavor: Flavor.dev,
-    appName: '[DEV] GBAccetta Feed',
-    initialColor: AppColor.deepPurple,
-    baseUrl: 'https://devbaseurl.com',
-  );
-
+  FlavorConfig.initDevEnvironment();
   WidgetsFlutterBinding.ensureInitialized();
   await serviceLocatorInitialization();
   await getIt<SharedPrefsService>().configure();
   runApp(const GBAccettaApp());
-
-  /// This is here to test the use of dart define
-  print(FlavorConfig.apiKey1);
-  print(FlavorConfig.apiKey2);
 }
 
 class GBAccettaApp extends StatelessWidget {

@@ -102,14 +102,14 @@ jobs:
               "SECRET_API_KEY_1":"${{ secrets.SECRET_API_KEY_1 }}", 
               "SECRET_API_KEY_2":"${{ secrets.SECRET_API_KEY_2 }}"
             }'
-          dir: 'lib/config/secrets'
+          dir: './'
       - name: 📱 Build android app bundle
         run: |
           flutter build appbundle 
             --release 
             --obfuscate 
             --split-debug-info=android/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }} 
-            --flavor ${{ vars.TAG }} -t lib/main.dart 
+            --flavor ${{ vars.TAG }} -t lib/main_${{ vars.TAG }}.dart 
             --build-number=${{ needs.determine-next-build-number.outputs.build_number }};
       - name: Save symbols artifact
         uses: actions/upload-artifact@v3
@@ -160,7 +160,7 @@ jobs:
               "SECRET_API_KEY_1":"${{ secrets.SECRET_API_KEY_1 }}", 
               "SECRET_API_KEY_2":"${{ secrets.SECRET_API_KEY_2 }}"
             }'
-          dir: 'lib/config/secrets'
+          dir: './'
       - name: 📱 Build ios TestFlight app
         env:
           MATCH_REPO: ${{ secrets.MATCH_REPO }}
@@ -170,7 +170,7 @@ jobs:
             --release 
             --obfuscate 
             --split-debug-info=ios/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }} 
-            --flavor ${{ vars.TAG }} -t lib/main.dart
+            --flavor ${{ vars.TAG }} -t lib/main_${{ vars.TAG }}.dart
             --no-codesign  
             --build-number=${{ needs.determine-next-build-number.outputs.build_number }};
           cd ios;
