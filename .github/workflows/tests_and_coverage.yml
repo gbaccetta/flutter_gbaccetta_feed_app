@@ -1,0 +1,69 @@
+name: 📊 Tests And Coverage
+# Allow to post comments back on the pull-requests
+permissions: write-all 
+
+# This concurrency group will stop any running the tests on the same branch if a new commit is
+# pushed before the previous job finished. This can help saving precious github minutes 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+on:
+  # make this reusable by other workflows
+  workflow_call:
+    inputs:
+      environment:
+        default: 'Prod'
+        type: string
+  # Triggered automatically on all pull requests to main
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths-ignore:
+      - '**.md' # do not trigger job if only docs were updated
+
+jobs:
+  run-tests-with-coverage:
+    # do not run job if the pull request is a draft
+    if: github.event.pull_request.draft == false
+    environment: 
+      name: ${{ inputs.environment || 'Prod' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v3
+      - name: ⚙️ Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true # This will allow to benefits from the cache mechanism
+      - name: 👁️ Check Flutter version
+        run: flutter --version   
+      - name: ⚙️ Install LCOV
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install lcov
+      - name: 🔐 Create [env]_secrets.json file
+        id: secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "${{ vars.TAG }}_secrets.json"
+          json: |
+            '{
+              "SECRET_API_KEY_1":"${{ secrets.SECRET_API_KEY_1 }}", 
+              "SECRET_API_KEY_2":"${{ secrets.SECRET_API_KEY_2 }}"
+            }'
+          dir: './'
+      - name: ▶️ Run tests with generate coverage report
+        run: |
+          flutter pub get;
+          flutter test --coverage;
+      # This action will do something only when triggered from a PR
+      - name: 📄 Report code coverage
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          lcov-file: coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Coverage Report in ${{ vars.TAG }} environment'

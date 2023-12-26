@@ -14,7 +14,7 @@
                 "--flavor",
                 "dev",
                 "--dart-define-from-file",
-                "./lib/config/secrets/dev_secrets.json"
+                "./dev_secrets.json"
             ]
         },
         {
@@ -27,7 +27,7 @@
                 "--flavor",
                 "dev",
                 "--dart-define-from-file",
-                "./lib/config/secrets/dev_secrets.json"
+                "./dev_secrets.json"
             ]
         },
         {
@@ -38,12 +38,12 @@
             "flutterMode": "debug",
             "args": [
                 "--dart-define-from-file",
-                "./lib/config/secrets/dev_secrets.json"
+                "./dev_secrets.json"
             ]
         },
         {
             "name": "PROD (debug)",
-            "program": "lib/main.dart",
+            "program": "lib/main_prod.dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -51,12 +51,12 @@
                 "--flavor",
                 "prod",
                 "--dart-define-from-file",
-                "./lib/config/secrets/prod_secrets.json"
+                "./prod_secrets.json"
             ]
         },
         {
             "name": "PROD (profile)",
-            "program": "lib/main.dart",
+            "program": "lib/main_prod.dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
@@ -64,12 +64,12 @@
                 "--flavor",
                 "prod",
                 "--dart-define-from-file",
-                "./lib/config/secrets/prod_secrets.json"
+                "./prod_secrets.json"
             ]
         },
         {
             "name": "PROD (release)",
-            "program": "lib/main.dart",
+            "program": "lib/main_prod.dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
@@ -77,31 +77,18 @@
                 "--flavor",
                 "prod",
                 "--dart-define-from-file",
-                "./lib/config/secrets/prod_secrets.json"
-            ]
-        },
-        {
-            "name": "DEV (debug)",
-            "program": "lib/main_dev.dart",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "debug",
-            "args": [
-                "--flavor",
-                "dev",
-                "--dart-define-from-file",
-                "./lib/config/secrets/dev_secrets.json"
+                "./prod_secrets.json"
             ]
         },
         {
             "name": "PROD NO FLAVOR (debug)",
-            "program": "lib/main.dart",
+            "program": "lib/main_prod.dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
             "args": [
                 "--dart-define-from-file",
-                "./lib/config/secrets/dev_secrets.json"
+                "./dev_secrets.json"
             ]
         },
     ]

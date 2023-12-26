@@ -14,7 +14,7 @@ void main() {
   });
 
   test('set and get AppColor', () async {
-    expect(sharedPrefsService.getAppColor(), AppColor.green);
+    expect(sharedPrefsService.getAppColor(), AppColor.deepPurple);
     sharedPrefsService.setAppColor(AppColor.blue);
     expect(sharedPrefsService.getAppColor(), AppColor.blue);
   });
