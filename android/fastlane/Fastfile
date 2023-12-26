@@ -1,0 +1,61 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Deploy a new build to Play Store Prod internal channel"
+  lane :distribute_play_store_prod do |options|
+    supply(
+      package_name: "com.gbaccetta.app",
+      track: "internal",
+      json_key: "sa.json",
+      aab: "../build/app/outputs/bundle/prodRelease/app-prod-release.aab"
+    )
+  end
+
+  desc "Deploy a new build to Play Store Dev internal channel"
+  lane :distribute_play_store_dev do |options|
+    supply(
+      package_name: "com.gbaccetta.app.dev",
+      track: "internal",
+      json_key: "sa.json",
+      aab: "../build/app/outputs/bundle/prodRelease/app-dev-release.aab"
+    )
+  end
+
+  desc "Get next internal track version code for prod app"
+  lane :next_internal_track_version_code_prod do
+    version_code = google_play_track_version_codes(
+      package_name: "com.gbaccetta.app",
+      track: "internal",
+      json_key: "sa.json",
+      )[0]
+    #save variable as github env variable
+    sh("echo android_version_code=#{version_code + 1} >> $GITHUB_ENV")
+  end
+
+  desc "Get next internal track version code for dev app"
+  lane :next_internal_track_version_code_dev do
+    version_code = google_play_track_version_codes(
+      package_name: "com.gbacceta.app.dev",
+      track: "internal",
+      json_key: "sa.json",
+      )[0]
+    #save variable as github env variable
+    sh("echo android_version_code=#{version_code + 1} >> $GITHUB_ENV")
+  end
+end

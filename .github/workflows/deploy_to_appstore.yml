@@ -127,7 +127,7 @@ jobs:
         run: |
           cd android;
           echo ${{secrets.GOOGLE_PLAY_PRD_SVA_KEY}} | base64 -d > sa.json
-          fastlane distribute_${{ vars.TAG }}_play_store;
+          fastlane distribute_play_store_${{ vars.TAG }};
           cd ..;
 
   deploy-ios-test-flight-app:

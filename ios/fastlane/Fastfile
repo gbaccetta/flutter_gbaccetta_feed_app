@@ -1,0 +1,120 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+def get_api_key_token()
+  api_key = app_store_connect_api_key(
+    key_id: ENV["APPLE_KEY_ID"],
+    issuer_id: ENV["APPLE_ISSUER_ID"],
+    key_content: ENV["APPLE_KEY_CONTENT"],            
+    duration: 1200,            
+    in_house: false
+  )
+  api_key
+end
+
+# Default temporary keychain password and name, if not included from environment
+TEMP_KEYCHAIN_NAME_DEFAULT = "fastlane_flutter"
+TEMP_KEYCHAIN_PASSWORD_DEFAULT = "temppassword"
+
+# Remove the temporary keychain, if it exists
+def delete_temp_keychain(name)
+  delete_keychain(
+    name: name
+  ) if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+end
+
+# Create the temporary keychain with name and password
+def create_temp_keychain(name, password)
+  create_keychain(
+    name: name,
+    password: password,
+    unlock: false
+  )
+end
+
+
+def build_app_for_app_store(scheme, app_identifier, build_number)
+  keychain_name = TEMP_KEYCHAIN_NAME_DEFAULT
+  keychain_password = TEMP_KEYCHAIN_PASSWORD_DEFAULT
+  ensure_temp_keychain(keychain_name, keychain_password)
+
+  increment_build_number(
+    build_number: build_number
+  )
+
+  match(
+    app_identifier: app_identifier,
+    type: 'appstore',
+    readonly: true,
+    keychain_name: keychain_name,
+    keychain_password: keychain_password,
+    git_url: ENV['MATCH_REPO']
+  )
+
+  gym(
+    configuration: "Release",
+    scheme: scheme,
+    export_method: "app-store",
+    output_directory: "./build/Runner",
+    output_name: "GBAFeed.ipa"
+    export_options: {
+      provisioningProfiles: { 
+        signingStyle: "manual",
+        "#{app_identifier}" => "match AppStore #{app_identifier}"
+      }
+    }
+  )
+
+  delete_temp_keychain(keychain_name)
+end
+
+platform :ios do
+  desc "Get next testflight build number for Prod environment"
+  lane :next_testflight_build_number_prod do
+    build_number = latest_testflight_build_number(
+      api_key: get_api_key_token(),
+      app_identifier: "com.gbaccetta.app",
+    )
+    #save variable as github env variable
+    sh("echo ios_build_number=#{build_number + 1} >> $GITHUB_ENV")
+  end
+
+  desc "Deploy a new build on Prod App Store Internal Test Flight"
+  lane :distribute_test_flight_prod do |options|
+    pilot(
+      api_key: get_api_key_token(),
+      apple_id: "1234567890",
+      app_identifier: "com.gbaccetta.app",
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      ipa: "./build/Runner/GBAFeed.ipa",
+    )
+  end
+
+  desc "Build & sign iOS Prod app for app store distribution"
+  lane :build_test_flight_prod do |options|
+    build_app_for_app_store("prod", "com.gbaccetta.app", options[:build_number])
+  end
+
+  # build ios app for app-store distribution
+  desc "Build & sign iOS Dev app for app store distribution"
+  lane :build_test_flight_dev do |options|
+    build_app_for_app_store("dev", "com.gbaccetta.app.dev", options[:build_number])
+  end
+end

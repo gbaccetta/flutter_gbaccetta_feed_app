@@ -75,6 +75,24 @@ android {
             versionNameSuffix ".dev"
         }
     }
+
+    signingConfigs {
+        release {
+            rootProject.file("key.properties").with { propFile ->
+                if (propFile.canRead()) {
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+
+                    storeFile properties['storeFile'] ? file(properties['storeFile']) : null
+                    storePassword properties['storePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println 'Unable to read key.properties'
+                }
+            }
+        }
+    }
 }
 
 flutter {

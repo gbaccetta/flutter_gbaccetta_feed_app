@@ -1,0 +1,4 @@
+git_url("git@github.com:gbaccetta/feed-app-ios-certificates.git")
+storage_mode("git")
+type("development") # The default type, can be: appstore, adhoc, enterprise or development
+app_identifier(["com.gbaccetta.app","com.gbaccetta.app.dev"])

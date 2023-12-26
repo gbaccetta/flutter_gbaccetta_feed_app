@@ -81,19 +81,6 @@
             ]
         },
         {
-            "name": "DEV (debug)",
-            "program": "lib/main_dev.dart",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "debug",
-            "args": [
-                "--flavor",
-                "dev",
-                "--dart-define-from-file",
-                "./dev_secrets.json"
-            ]
-        },
-        {
             "name": "PROD NO FLAVOR (debug)",
             "program": "lib/main_prod.dart",
             "request": "launch",
