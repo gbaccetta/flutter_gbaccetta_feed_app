@@ -1,0 +1,193 @@
+name: 📲 Deploy to App Stores
+
+on:
+  # We want to trigger an upload to the apple and play store when
+  # creating a new tag starting with the v suffix
+  push:
+    tags:
+      - "v*"
+  # We will also add a manual dispatch trigger
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'Prod'
+        type: choice
+        options:
+          - Dev
+          - Prod
+      platform:
+        description: 'Target app store (Google, Apple or both)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - Apple App Store
+          - Google Play Store
+          - both
+
+jobs:
+  determine-next-build-number:
+    environment: 
+      # default to prod environment
+      name: ${{ inputs.environment || 'Prod' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: ⚙️ Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: ⚙️ Install fastlane
+        run: gem install fastlane -NV
+      - name: 👉 Get next Internal track version code
+        run: |
+          cd android;
+          echo ${{secrets.GOOGLE_PLAY_PRD_SVA_KEY}} | base64 -d > sa.json
+          fastlane next_internal_track_version_code_${{ vars.TAG }};
+          cd ..;
+      - name: 👉 Get next TestFlight build number
+        env:
+          APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
+          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
+          APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
+        run: |
+          cd ios;
+          fastlane next_testflight_build_number_${{ vars.TAG }};
+          cd ..;
+      - name: 👉 Get max between the build_number and version_code
+        run: |
+          echo "build_number=$(( $ios_build_number  > $android_version_code ? $ios_build_number : $android_version_code ))" >> $GITHUB_ENV;
+    outputs:
+      build_number: ${{ env.build_number }}
+
+  deploy-android-internal-test-app:
+    needs: determine-next-build-number
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v3
+      - name: ⚙️ Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "12.x"
+          cache: 'gradle'
+        id: java
+      - name: ⚙️ Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true # This will allow to benefits from the cache mechanism
+      - name: 👁️ Check Flutter version
+        run: flutter --version   
+      - name: 🔐 Add android signing credentials
+        run: |
+          cd android;
+          base64 -d <<< ${{ secrets.ANDROID_UPLOAD_KEYSTORE }} > keystore.jks;
+          echo storeFile=../keystore.jks > key.properties;
+          echo storePassword=${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }} >> key.properties;
+          echo keyAlias=${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }} >> key.properties;
+          echo keyPassword=${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }} >> key.properties;
+          cd ..;
+      - name: 🔐 Create [env]_secrets.json file
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "${{ vars.TAG }}_secrets.json"
+          json: |
+            '{
+              "SECRET_API_KEY_1":"${{ secrets.SECRET_API_KEY_1 }}", 
+              "SECRET_API_KEY_2":"${{ secrets.SECRET_API_KEY_2 }}"
+            }'
+          dir: 'lib/config/secrets'
+      - name: 📱 Build android app bundle
+        run: |
+          flutter build appbundle 
+            --release 
+            --obfuscate 
+            --split-debug-info=android/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }} 
+            --flavor ${{ vars.TAG }} -t lib/main.dart 
+            --build-number=${{ needs.determine-next-build-number.outputs.build_number }};
+      - name: Save symbols artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: symbols_${{ needs.determine-next-build-number.outputs.build_number }}
+          path: android/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }}/*
+          retention-days: 90
+      - name: ⚙️ Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: ⚙️ Install fastlane
+        run: gem install fastlane -NV
+      - name: 📲 Deploy android app to Play Console Internal Track
+        run: |
+          cd android;
+          echo ${{secrets.GOOGLE_PLAY_PRD_SVA_KEY}} | base64 -d > sa.json
+          fastlane distribute_${{ vars.TAG }}_play_store;
+          cd ..;
+
+  deploy-ios-test-flight-app:
+    needs: determine-next-build-number
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v3
+      - name: ⚙️ Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true # This will allow to benefits from the cache mechanism
+      - name: 👁️ Check Flutter version
+        run: flutter --version   
+      - name: ⚙️ Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: ⚙️ Install fastlane
+        run: gem install fastlane -NV
+      - name: 🔐 Create [env]_secrets.json file
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "${{ vars.TAG }}_secrets.json"
+          json: |
+            '{
+              "SECRET_API_KEY_1":"${{ secrets.SECRET_API_KEY_1 }}", 
+              "SECRET_API_KEY_2":"${{ secrets.SECRET_API_KEY_2 }}"
+            }'
+          dir: 'lib/config/secrets'
+      - name: 📱 Build ios TestFlight app
+        env:
+          MATCH_REPO: ${{ secrets.MATCH_REPO }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASS }}
+        run: |
+          flutter build ios 
+            --release 
+            --obfuscate 
+            --split-debug-info=ios/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }} 
+            --flavor ${{ vars.TAG }} -t lib/main.dart
+            --no-codesign  
+            --build-number=${{ needs.determine-next-build-number.outputs.build_number }};
+          cd ios;
+          fastlane build_test_flight_${{ vars.TAG }} build_number:${{ needs.determine-next-build-number.outputs.build_number }};
+          cd ..;
+      - name: ⬇️ Save symbols artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: symbols_${{ needs.determine-next-build-number.outputs.build_number }}
+          path: ios/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }}/*
+          retention-days: 90
+      - name: 📲 Deploy TestFlight app to App Store Connect
+        env:
+          APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
+          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
+          APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
+        run: |
+          cd ios;
+          fastlane distribute_test_flight_${{ vars.TAG }}
+          cd ..;
