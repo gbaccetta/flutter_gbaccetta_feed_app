@@ -61,9 +61,17 @@ jobs:
           echo "build_number=$(( $ios_build_number  > $android_version_code ? $ios_build_number : $android_version_code ))" >> $GITHUB_ENV;
     outputs:
       build_number: ${{ env.build_number }}
+  
+  test-and-coverage:
+    needs: determine-next-build-number
+    name: 📊 Test And Coverage
+    uses: ./.github/workflows/tests_and_coverage.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment || 'Prod' }}
 
   deploy-android-internal-test-app:
-    needs: determine-next-build-number
+    needs: test-and-coverage
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -132,7 +140,7 @@ jobs:
           cd ..;
 
   deploy-ios-test-flight-app:
-    needs: determine-next-build-number
+    needs: test-and-coverage
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
