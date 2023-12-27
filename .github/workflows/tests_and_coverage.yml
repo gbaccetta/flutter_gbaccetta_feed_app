@@ -2,8 +2,8 @@ name: 📊 Tests And Coverage
 # Allow to post comments back on the pull-requests
 permissions: write-all 
 
-# This concurrency group will stop any running the tests on the same branch if a new commit is
-# pushed before the previous job finished. This can help saving precious github minutes 
+# This concurrency group will stop the workflow if a new commit is pushed on the same
+# branch before the previous job finished. This can help saving precious github minutes 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: true
@@ -30,7 +30,7 @@ jobs:
     environment: 
       name: ${{ inputs.environment || 'Prod' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 10
     steps:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v3
@@ -45,11 +45,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install lcov
-      - name: 🔐 Create [env]_secrets.json file
+      # usually secrets are not needed for tests but we want here to demonstrate how to create a
+      # an environment secret fil to be used with the dart-define command in our jobs.
+      # we will use jsdaniell/create-json action to create the file from the github secrets.
+      - name: 🔐 Create ${{ vars.TAG }}_secrets.json file
         id: secrets
         uses: jsdaniell/create-json@1.1.2
         with:
           name: "${{ vars.TAG }}_secrets.json"
+          # The content of the json we want to create
           json: |
             '{
               "SECRET_API_KEY_1":"${{ secrets.SECRET_API_KEY_1 }}", 

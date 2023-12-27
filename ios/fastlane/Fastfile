@@ -89,7 +89,7 @@ platform :ios do
       api_key: get_api_key_token(),
       app_identifier: "com.gbaccetta.app",
     )
-    #save variable as github env variable
+    # save variable as github env variable
     sh("echo ios_build_number=#{build_number + 1} >> $GITHUB_ENV")
   end
 
@@ -103,6 +103,8 @@ platform :ios do
       skip_submission: true,
       distribute_external: false,
       notify_external_testers: false,
+      # this allows to avoid rebuilding the app already built with flutter
+      archive_path: "../build/ios/archive/GBAFeed.xcarchive"
       ipa: "./build/Runner/GBAFeed.ipa",
     )
   end

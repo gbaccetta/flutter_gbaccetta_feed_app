@@ -44,7 +44,7 @@ jobs:
       - name: 👉 Get next Internal track version code
         run: |
           cd android;
-          echo ${{secrets.GOOGLE_PLAY_PRD_SVA_KEY}} | base64 -d > sa.json
+          echo ${{secrets.GOOGLE_PLAY_SVA_KEY}} | base64 -d > sa.json
           fastlane next_internal_track_version_code_${{ vars.TAG }};
           cd ..;
       - name: 👉 Get next TestFlight build number
@@ -71,6 +71,8 @@ jobs:
       environment: ${{ inputs.environment || 'Prod' }}
 
   deploy-android-internal-test-app:
+    # check if platform was included in the inputs
+    if: inputs.platform == 'Google Play Store' || inputs.platform == 'both'
     needs: test-and-coverage
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -135,11 +137,13 @@ jobs:
       - name: 📲 Deploy android app to Play Console Internal Track
         run: |
           cd android;
-          echo ${{secrets.GOOGLE_PLAY_PRD_SVA_KEY}} | base64 -d > sa.json
+          echo ${{secrets.GOOGLE_PLAY_SVA_KEY}} | base64 -d > sa.json
           fastlane distribute_play_store_${{ vars.TAG }};
           cd ..;
 
   deploy-ios-test-flight-app:
+    # check if platform was included in the inputs
+    if: inputs.platform == 'Apple App Store' || inputs.platform == 'both'
     needs: test-and-coverage
     runs-on: macos-latest
     timeout-minutes: 60
