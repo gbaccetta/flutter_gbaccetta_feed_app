@@ -110,7 +110,8 @@ jobs:
             --obfuscate 
             --split-debug-info=android/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }} 
             --flavor ${{ vars.TAG }} -t lib/main_${{ vars.TAG }}.dart 
-            --build-number=${{ needs.determine-next-build-number.outputs.build_number }};
+            --build-number=${{ needs.determine-next-build-number.outputs.build_number }}
+            --dart-define-from-file ./${{ vars.TAG }}_secrets.json;
       - name: Save symbols artifact
         uses: actions/upload-artifact@v3
         with:
@@ -172,7 +173,8 @@ jobs:
             --split-debug-info=ios/build/symbols/symbols_${{ needs.determine-next-build-number.outputs.build_number }} 
             --flavor ${{ vars.TAG }} -t lib/main_${{ vars.TAG }}.dart
             --no-codesign  
-            --build-number=${{ needs.determine-next-build-number.outputs.build_number }};
+            --build-number=${{ needs.determine-next-build-number.outputs.build_number }}
+            --dart-define-from-file ./${{ vars.TAG }}_secrets.json;
           cd ios;
           fastlane build_test_flight_${{ vars.TAG }} build_number:${{ needs.determine-next-build-number.outputs.build_number }};
           cd ..;

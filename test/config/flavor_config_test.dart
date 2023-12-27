@@ -11,8 +11,8 @@ void main() {
       expect(FlavorConfig.appName, '[DEV] GBAccetta Feed');
       expect(FlavorConfig.initialColor, AppColor.deepPurple);
       expect(FlavorConfig.baseUrl, 'https://devbaseurl.com');
-      expect(FlavorConfig.apiKey1, isEmpty);
-      expect(FlavorConfig.apiKey2, isEmpty);
+      expect(FlavorConfig.apiKey1, isA<String>());
+      expect(FlavorConfig.apiKey2, isA<String>());
     });
 
     test('PROD environment', () {
@@ -23,8 +23,8 @@ void main() {
       expect(FlavorConfig.appName, 'GBAccetta Feed');
       expect(FlavorConfig.initialColor, AppColor.green);
       expect(FlavorConfig.baseUrl, 'https://prodbaseurl.com');
-      expect(FlavorConfig.apiKey1, isEmpty);
-      expect(FlavorConfig.apiKey2, isEmpty);
+      expect(FlavorConfig.apiKey1, isA<String>());
+      expect(FlavorConfig.apiKey2, isA<String>());
     });
 
 }

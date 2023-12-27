@@ -59,7 +59,7 @@ jobs:
       - name: ▶️ Run tests with generate coverage report
         run: |
           flutter pub get;
-          flutter test --coverage;
+          flutter test --coverage --dart-define-from-file ./${{ vars.TAG }}_secrets.json;
       # This action will do something only when triggered from a PR
       - name: 📄 Report code coverage
         uses: romeovs/lcov-reporter-action@v0.3.1
